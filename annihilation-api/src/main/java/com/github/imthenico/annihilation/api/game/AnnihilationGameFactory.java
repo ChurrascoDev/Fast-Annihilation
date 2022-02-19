@@ -3,16 +3,13 @@ package com.github.imthenico.annihilation.api.game;
 import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.match.MatchFactory;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
-import com.github.imthenico.annihilation.api.world.SimpleWorld;
-
-import java.util.Map;
 
 public interface AnnihilationGameFactory {
 
     GameInstance newGame(
+            String id,
             String matchType,
-            ConfigurableModel model,
-            Map<String, String> extraData
+            ConfigurableModel lobbyModel
     ) throws IllegalArgumentException;
 
     void registerMatchCreator(

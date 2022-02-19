@@ -1,11 +1,14 @@
 package com.github.imthenico.annihilation.api.game;
 
 import com.github.imthenico.annihilation.api.Annihilation;
+import com.github.imthenico.annihilation.api.converter.ConverterToGameLobby;
+import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.match.MatchFactory;
 import com.github.imthenico.annihilation.api.match.authorization.SimpleMatchAuthorizer;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 import com.github.imthenico.simplecommons.util.Validate;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,18 +16,24 @@ public class SimpleGameRoomFactory implements AnnihilationGameFactory {
 
     private final Annihilation annihilation;
     private final Map<String, MatchFactory> matchCreators;
-    private final
-    public SimpleGameRoomFactory(Annihilation annihilation) {
+    private ModelConverter<GameLobby> toLobbyConverter;
+
+    public SimpleGameRoomFactory(
+            Annihilation annihilation,
+            GameInstanceManager gameInstanceManager
+    ) {
         this.annihilation = Validate.notNull(annihilation);
         this.matchCreators = new HashMap<>();
 
         matchCreators.put("default", MatchFactory.create(annihilation, "default"));
+        this.toLobbyConverter = new ConverterToGameLobby(gameInstanceManager);
     }
 
     @Override
     public GameInstance newGame(
+            String id,
             String matchType,
-            ConfigurableModel model, Map<String, String> extraData
+            ConfigurableModel lobbyModel
     ) throws IllegalArgumentException {
         MatchFactory matchFactory;
 
@@ -36,8 +45,8 @@ public class SimpleGameRoomFactory implements AnnihilationGameFactory {
         Validate.isTrue(matchFactory != null, "Unable to find a match creator");
 
         return new SimpleGameInstance(
-                new SimpleGameLobby(lobbyWorld),
-                matchType,
+                toLobbyConverter.convert(lobbyModel, Collections.singletonMap("gameId", id)),
+                id,
                 GameInstance.DEFAULT_RULES,
                 new SimpleMatchAuthorizer(annihilation),
                 matchFactory,
@@ -53,5 +62,10 @@ public class SimpleGameRoomFactory implements AnnihilationGameFactory {
         Validate.isTrue(!matchCreators.containsKey(matchTypeName), "There's already a registered match creator with that key");
 
         matchCreators.put(matchTypeName, Validate.notNull(matchFactory));
+    }
+
+    @Override
+    public void setToLobbyConverter(ModelConverter<GameLobby> toLobbyConverter) {
+        this.toLobbyConverter = Validate.notNull(toLobbyConverter);
     }
 }
