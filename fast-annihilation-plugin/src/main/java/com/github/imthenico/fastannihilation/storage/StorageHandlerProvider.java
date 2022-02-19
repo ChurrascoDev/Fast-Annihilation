@@ -10,6 +10,6 @@ public interface StorageHandlerProvider {
 
     Executor STORAGE_EXECUTOR = Executors.newFixedThreadPool(3);
 
-    AnniStorageHandler createHandler(JavaPlugin plugin, AnniConfig anniConfig) throws Exception;
+    AnniStorage createHandler(JavaPlugin plugin, AnniConfig anniConfig) throws Exception;
 
 }

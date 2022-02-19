@@ -2,7 +2,7 @@ package com.github.imthenico.fastannihilation.storage.impl;
 
 import com.github.imthenico.fastannihilation.config.AnniConfig;
 import com.github.imthenico.fastannihilation.mapping.DefaultMapperInstance;
-import com.github.imthenico.fastannihilation.storage.AnniStorageHandler;
+import com.github.imthenico.fastannihilation.storage.AnniStorage;
 import com.github.imthenico.fastannihilation.storage.StorageHandlerProvider;
 import com.github.imthenico.fastannihilation.storage.StorageSource;
 import com.github.imthenico.fastannihilation.storage.StorageSourceType;
@@ -16,17 +16,17 @@ import java.io.File;
 public class FileStorageHandlerProvider implements StorageHandlerProvider {
 
     @Override
-    public AnniStorageHandler createHandler(
+    public AnniStorage createHandler(
             JavaPlugin plugin, AnniConfig anniConfig
     ) throws Exception {
-        File file = new File(plugin.getDataFolder(), "annihilation-map-data");
+        File file = new File(plugin.getDataFolder(), "annihilation-model-data");
 
         StorageSource storageSource = new StorageSource(StorageSourceType.FILE, file);
         AbstractRepository<TreeNode> mapModelDataRepository = createRepository(
                 file, TreeNode.class
         );
 
-        return new SimpleAnniStorageHandler(
+        return new SimpleAnniStorage(
                 mapModelDataRepository,
                 storageSource
         );

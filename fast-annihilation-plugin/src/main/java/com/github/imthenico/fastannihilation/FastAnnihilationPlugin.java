@@ -17,7 +17,7 @@ import com.github.imthenico.annihilation.api.scheduler.SimpleBukkitScheduler;
 import com.github.imthenico.annihilation.api.task.GameTimerUpdater;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.fastannihilation.config.AnniConfig;
-import com.github.imthenico.fastannihilation.storage.AnniStorageHandler;
+import com.github.imthenico.fastannihilation.storage.AnniStorage;
 import com.github.imthenico.fastannihilation.template.SlimeWorldTemplateLoader;
 import com.github.imthenico.simplecommons.bukkit.configuration.Configuration;
 import com.grinderwolf.swm.api.SlimePlugin;
@@ -71,10 +71,10 @@ public final class FastAnnihilationPlugin extends JavaPlugin {
         SlimeLoader slimeLoader = slimePlugin.getLoader(pluginHandler.getPluginConfig().getSwmLoaderName());
         WorldTemplateLoader worldTemplateLoader = new SlimeWorldTemplateLoader(slimeLoader);
 
-        AnniStorageHandler anniStorageHandler = newStorageHandler(pluginHandler.getStorageHandler());
+        AnniStorage anniStorage = newStorageHandler(pluginHandler.getStorageHandler());
 
         MapModelStorage mapModelStorage = new SimpleMapStorage(
-                anniStorageHandler.getMapModelDataRepository(),
+                anniStorage.getModelDataRepository(),
                 new SimpleDataInterpretation(),
                 worldTemplateLoader,
                 new SimpleBukkitScheduler(this)

@@ -1,7 +1,7 @@
 package com.github.imthenico.fastannihilation;
 
 import com.github.imthenico.fastannihilation.config.AnniConfig;
-import com.github.imthenico.fastannihilation.storage.AnniStorageHandler;
+import com.github.imthenico.fastannihilation.storage.AnniStorage;
 import com.github.imthenico.simplecommons.bukkit.configuration.Configuration;
 
 import java.io.File;
@@ -15,7 +15,7 @@ public interface PluginHandler {
 
     AnniConfig getPluginConfig();
 
-    Supplier<AnniStorageHandler> getStorageHandler();
+    Supplier<AnniStorage> getStorageHandler();
 
     void reloadConfig();
 

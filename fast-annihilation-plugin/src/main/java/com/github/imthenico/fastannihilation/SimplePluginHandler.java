@@ -3,7 +3,7 @@ package com.github.imthenico.fastannihilation;
 import com.github.imthenico.annihilation.api.concurrent.CompletableFutures;
 import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
 import com.github.imthenico.fastannihilation.config.AnniConfig;
-import com.github.imthenico.fastannihilation.storage.AnniStorageHandler;
+import com.github.imthenico.fastannihilation.storage.AnniStorage;
 import com.github.imthenico.fastannihilation.storage.StorageHandlerProvider;
 import com.github.imthenico.fastannihilation.storage.StorageHandlerProviderFactory;
 import com.github.imthenico.simplecommons.bukkit.configuration.Configuration;
@@ -24,7 +24,7 @@ public class SimplePluginHandler implements PluginHandler {
 
     private final FastAnnihilationPlugin plugin;
     private StorageHandlerProvider storageHandlerProvider;
-    private AnniStorageHandler storageHandler;
+    private AnniStorage storageHandler;
     private AnniConfig anniConfig;
 
     public SimplePluginHandler(FastAnnihilationPlugin plugin) {
@@ -55,7 +55,7 @@ public class SimplePluginHandler implements PluginHandler {
     }
 
     @Override
-    public Supplier<AnniStorageHandler> getStorageHandler() {
+    public Supplier<AnniStorage> getStorageHandler() {
         return () -> storageHandler;
     }
 

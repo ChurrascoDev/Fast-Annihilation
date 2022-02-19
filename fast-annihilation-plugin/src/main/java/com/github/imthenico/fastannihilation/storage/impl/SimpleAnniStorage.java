@@ -1,16 +1,16 @@
 package com.github.imthenico.fastannihilation.storage.impl;
 
-import com.github.imthenico.fastannihilation.storage.AnniStorageHandler;
+import com.github.imthenico.fastannihilation.storage.AnniStorage;
 import com.github.imthenico.fastannihilation.storage.StorageSource;
 import com.github.imthenico.simplecommons.data.node.TreeNode;
 import com.github.imthenico.simplecommons.data.repository.AbstractRepository;
 
-public class SimpleAnniStorageHandler implements AnniStorageHandler {
+public class SimpleAnniStorage implements AnniStorage {
 
     private final AbstractRepository<TreeNode> mapModelDataRepository;
     private final StorageSource storageSource;
 
-    public SimpleAnniStorageHandler(
+    public SimpleAnniStorage(
             AbstractRepository<TreeNode> mapModelDataRepository,
             StorageSource storageSource
     ) {
@@ -19,7 +19,7 @@ public class SimpleAnniStorageHandler implements AnniStorageHandler {
     }
 
     @Override
-    public AbstractRepository<TreeNode> getMapModelDataRepository() {
+    public AbstractRepository<TreeNode> getModelDataRepository() {
         return mapModelDataRepository;
     }
 
