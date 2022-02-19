@@ -35,7 +35,7 @@ public class FastAnnihilation implements Annihilation {
         this.scheduler = scheduler;
 
         this.gameRegistry = new SimpleGameInstanceManager();
-        this.annihilationGameFactory = new SimpleGameRoomFactory(this);
+        this.annihilationGameFactory = new SimpleGameRoomFactory(this, gameRegistry);
     }
 
     @Override
