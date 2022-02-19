@@ -1,0 +1,6 @@
+name: FastAnnihilation
+version: '${project.version}'
+main: com.github.imthenico.fastannihilation.FastAnnihilation
+authors: [ ImTheNico ]
+depend:
+  - SlimeWorldManager
