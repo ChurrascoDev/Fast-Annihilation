@@ -4,7 +4,7 @@ import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.match.MatchFactory;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 
-public interface AnnihilationGameFactory {
+public interface GameFactory {
 
     GameInstance newGame(
             String id,

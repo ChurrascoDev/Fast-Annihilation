@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleGameRoomFactory implements AnnihilationGameFactory {
+public class SimpleGameRoomFactory implements GameFactory {
 
     private final AnnihilationAPI annihilationAPI;
     private final Map<String, MatchFactory> matchCreators;
