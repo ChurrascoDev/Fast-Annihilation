@@ -1,15 +1,14 @@
 package com.github.imthenico.fastannihilation;
 
 import com.github.imthenico.annihilation.api.AnnihilationAPI;
-import com.github.imthenico.annihilation.api.game.AnnihilationGameFactory;
-import com.github.imthenico.annihilation.api.game.SimpleGameInstanceManager;
-import com.github.imthenico.annihilation.api.game.SimpleGameRoomFactory;
-import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
-import com.github.imthenico.annihilation.api.game.GameInstanceManager;
+import com.github.imthenico.annihilation.api.property.PropertyMapping;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
+import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
+import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.annihilation.api.world.LocationReference;
+import com.github.imthenico.simplecommons.bukkit.service.PluginServiceRegistry;
 import com.github.imthenico.simplecommons.util.Validate;
 import org.bukkit.Bukkit;
 
@@ -17,25 +16,23 @@ public class FastAnnihilationAPI implements AnnihilationAPI {
 
     private final UtilityPack utilityPack;
     private final PlayerRegistry playerRegistry;
-    private final GameInstanceManager gameRegistry;
-    private final AnnihilationGameFactory annihilationGameFactory;
-    private final ConfigurableModelManager configurableModelManager;
+    private final PluginServiceRegistry pluginServiceRegistry;
     private final Scheduler scheduler;
+    private final PropertyMapping propertyMapping;
     private LocationReference lobbySpawn;
 
     public FastAnnihilationAPI(
             UtilityPack utilityPack,
             PlayerRegistry playerRegistry,
-            ConfigurableModelManager configurableModelManager,
+            PluginServiceRegistry pluginServiceRegistry,
+            PropertyMapping propertyMapping,
             Scheduler scheduler
     ) {
         this.utilityPack = utilityPack;
         this.playerRegistry = playerRegistry;
-        this.configurableModelManager = configurableModelManager;
+        this.pluginServiceRegistry = pluginServiceRegistry;
+        this.propertyMapping = propertyMapping;
         this.scheduler = scheduler;
-
-        this.gameRegistry = new SimpleGameInstanceManager();
-        this.annihilationGameFactory = new SimpleGameRoomFactory(this, gameRegistry);
     }
 
     @Override
@@ -49,18 +46,18 @@ public class FastAnnihilationAPI implements AnnihilationAPI {
     }
 
     @Override
-    public GameInstanceManager gameRegistry() {
-        return gameRegistry;
+    public GameService gameService() {
+        return pluginServiceRegistry.getService(GameService.class);
     }
 
     @Override
-    public AnnihilationGameFactory gameFactory() {
-        return annihilationGameFactory;
+    public ConfigurableModelService modelService() {
+        return pluginServiceRegistry.getService(ConfigurableModelService.class);
     }
 
     @Override
-    public ConfigurableModelManager getMapManager() {
-        return configurableModelManager;
+    public PropertyMapping getPropertyMapping() {
+        return propertyMapping;
     }
 
     @Override

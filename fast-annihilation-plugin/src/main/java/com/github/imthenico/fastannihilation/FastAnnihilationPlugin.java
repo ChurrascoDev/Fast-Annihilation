@@ -1,26 +1,27 @@
 package com.github.imthenico.fastannihilation;
 
 import com.github.imthenico.annihilation.api.PluginHandler;
-import com.github.imthenico.annihilation.api.cache.SimpleMapModelCache;
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
 import com.github.imthenico.annihilation.api.lang.AnniPlayerAdapter;
 import com.github.imthenico.annihilation.api.lang.MatchPlayerAdapter;
 import com.github.imthenico.annihilation.api.lang.PlayerLinguist;
-import com.github.imthenico.annihilation.api.loader.MapModelStorage;
-import com.github.imthenico.annihilation.api.loader.SimpleMapStorage;
-import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
-import com.github.imthenico.annihilation.api.map.SimpleConfigurableModelManager;
+import com.github.imthenico.annihilation.api.property.PropertyMapping;
 import com.github.imthenico.annihilation.api.property.SimpleDataInterpretation;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
 import com.github.imthenico.annihilation.api.provider.WorldTemplateLoader;
+import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.scheduler.SimpleBukkitScheduler;
+import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
+import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.task.GameTimerUpdater;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.annihilation.api.config.AnniConfig;
 import com.github.imthenico.annihilation.api.storage.AnniStorage;
 import com.github.imthenico.fastannihilation.template.SlimeWorldTemplateLoader;
 import com.github.imthenico.simplecommons.bukkit.configuration.Configuration;
+import com.github.imthenico.simplecommons.bukkit.service.PluginServiceRegistry;
+import com.github.imthenico.simplecommons.bukkit.service.SimplePluginServiceRegistry;
 import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
 import me.yushust.message.MessageHandler;
@@ -53,6 +54,8 @@ public final class FastAnnihilationPlugin extends JavaPlugin {
 
         this.pluginHandler = new SimplePluginHandler(this);
 
+        PluginServiceRegistry pluginServiceRegistry = new SimplePluginServiceRegistry(this);
+
         MessageSource messageSource = new YamlMessageSource(
                 this,
                 new File(pluginHandler.getFolder(), "lang"),
@@ -67,33 +70,43 @@ public final class FastAnnihilationPlugin extends JavaPlugin {
                         .resolveFrom(MatchPlayer.class, new MatchPlayerAdapter())
                         .setLinguist(new PlayerLinguist(playerRegistry)));
 
+        UtilityPack utilityPack = new UtilityPack(messageHandler);
+
         SlimePlugin slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
 
         SlimeLoader slimeLoader = slimePlugin.getLoader(pluginHandler.getPluginConfig().getSwmLoaderName());
         WorldTemplateLoader worldTemplateLoader = new SlimeWorldTemplateLoader(slimeLoader);
 
         AnniStorage anniStorage = newStorageHandler(pluginHandler.getStorageHandler());
+        PropertyMapping propertyMapping = new SimpleDataInterpretation();
 
-        MapModelStorage mapModelStorage = new SimpleMapStorage(
-                anniStorage.getModelDataRepository(),
-                new SimpleDataInterpretation(),
+        Scheduler scheduler = new SimpleBukkitScheduler(this);
+
+        ConfigurableModelService modelService = new ConfigurableModelService(
+                anniStorage,
+                propertyMapping,
                 worldTemplateLoader,
-                new SimpleBukkitScheduler(this)
+                scheduler
         );
 
-        ConfigurableModelManager configurableModelManager = new SimpleConfigurableModelManager(
-                new SimpleMapModelCache(),
-                mapModelStorage
+        GameService gameService = new GameService(
+                utilityPack,
+                scheduler,
+                modelService.cache()
         );
+
+        pluginServiceRegistry.loadService(modelService);
+        pluginServiceRegistry.loadService(gameService);
 
         this.fastAnnihilation = new FastAnnihilationAPI(
-                new UtilityPack(messageHandler),
+                utilityPack,
                 playerRegistry,
-                configurableModelManager,
-                new SimpleBukkitScheduler(this)
+                pluginServiceRegistry,
+                propertyMapping,
+                scheduler
         );
 
-        new GameTimerUpdater(fastAnnihilation.gameRegistry(), messageHandler)
+        new GameTimerUpdater(gameService.gameManager(), messageHandler)
                 .runTaskTimer(this, 0, 20);
     }
 
