@@ -78,7 +78,7 @@ public class SimpleDataInterpretation implements PropertyMapping {
 
     @Override
     public PropertiesContainer deserializeProperties(TreeNode node) {
-        MapPropertiesHelper properties = new SimplePropertiesContainer();
+        PropertiesContainer properties = new SimplePropertiesContainer();
 
         AdapterNode adapterNode = new AdapterNode(node, globalMapper);
 
