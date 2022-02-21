@@ -10,16 +10,16 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public class WithSavingSetupManager<T extends ConfigurableModel> extends AbstractSetupManager<T> {
+public class WithSavingSetupManager extends AbstractSetupManager {
 
-    private final SavingService<T> savingService;
+    private final SavingService<ConfigurableModel> savingService;
 
-    public WithSavingSetupManager(SavingService<T> savingService) {
+    public WithSavingSetupManager(SavingService savingService) {
         this.savingService = savingService;
     }
 
     @Override
-    public CompletableFuture<?> saveChanges(T model) throws IllegalArgumentException {
+    public CompletableFuture<?> saveChanges(ConfigurableModel model) throws IllegalArgumentException {
         long current = System.currentTimeMillis();
 
         return CompletableFutures.timed(
@@ -28,7 +28,7 @@ public class WithSavingSetupManager<T extends ConfigurableModel> extends Abstrac
         ).whenComplete((a, exc) -> logSaving(model, current));
     }
 
-    private void logSaving(T model, long millis) {
+    private void logSaving(ConfigurableModel model, long millis) {
         millis = System.currentTimeMillis() - millis;
         Bukkit.getLogger().log(Level.INFO, String.format("%s saved in %sms", model.getId(), millis));
     }

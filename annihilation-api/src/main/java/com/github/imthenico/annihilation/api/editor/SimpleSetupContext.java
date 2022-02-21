@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SimpleSetupContext<T extends ConfigurableModel> implements SetupContext<T> {
+public class SimpleSetupContext<T extends ConfigurableModel> implements SetupContext {
 
     private final T target;
     private final Map<UUID, AnniPlayer> editors;
@@ -27,7 +27,7 @@ public class SimpleSetupContext<T extends ConfigurableModel> implements SetupCon
     }
 
     @Override
-    public T getEditingTarget() {
+    public ConfigurableModel getEditingTarget() {
         return target;
     }
 

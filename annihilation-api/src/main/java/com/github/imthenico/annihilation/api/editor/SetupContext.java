@@ -7,9 +7,9 @@ import com.github.imthenico.annihilation.api.property.PropertiesContainer;
 import java.util.Map;
 import java.util.UUID;
 
-public interface SetupContext<T extends ConfigurableModel> {
+public interface SetupContext {
 
-    T getEditingTarget();
+    ConfigurableModel getEditingTarget();
 
     Map<UUID, AnniPlayer> getEditors();
 

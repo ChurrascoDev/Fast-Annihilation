@@ -8,22 +8,22 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractSetupManager<T extends ConfigurableModel> implements SetupManager<T> {
+public abstract class AbstractSetupManager implements SetupManager {
 
-    private final Map<T, SetupContext<T>> activeSessions;
+    private final Map<ConfigurableModel, SetupContext> activeSessions;
 
     public AbstractSetupManager() {
         this.activeSessions = new HashMap<>();
     }
 
     @Override
-    public SetupContext<T> getSession(T model) {
+    public SetupContext getSession(ConfigurableModel model) {
         return activeSessions.get(model);
     }
 
     @Override
-    public SetupContext<T> getSession(Player player) {
-        for (SetupContext<T> value : activeSessions.values()) {
+    public SetupContext getSession(Player player) {
+        for (SetupContext value : activeSessions.values()) {
             if (value.getEditors().containsKey(player.getUniqueId()))
                 return value;
         }
@@ -32,13 +32,15 @@ public abstract class AbstractSetupManager<T extends ConfigurableModel> implemen
     }
 
     @Override
-    public SetupContext<T> setupMap(AnniPlayer player, T map) throws UnsupportedOperationException {
+    public SetupContext setupMap(AnniPlayer player, ConfigurableModel model) throws UnsupportedOperationException {
         if (getSession(player) != null) {
             throw new UnsupportedOperationException("Player is already editing a map");
         }
 
-        SetupContext<T> setupContext = activeSessions
-                .computeIfAbsent(map, (k) -> new SimpleSetupContext<>(Validate.notNull(map)));
+        Validate.notNull(model);
+
+        SetupContext setupContext = activeSessions
+                .computeIfAbsent(model, (k) -> new SimpleSetupContext<>(model));
 
         setupContext.addEditor(player);
 
@@ -46,11 +48,11 @@ public abstract class AbstractSetupManager<T extends ConfigurableModel> implemen
     }
 
     @Override
-    public boolean terminateSession(T model) {
+    public boolean terminateSession(ConfigurableModel model) {
         if (!activeSessions.containsKey(model))
             return false;
 
-        SetupContext<T> setupContext = activeSessions.get(model);
+        SetupContext setupContext = activeSessions.get(model);
 
         setupContext.getEditors().values().forEach(setupContext::removeEditor);
 

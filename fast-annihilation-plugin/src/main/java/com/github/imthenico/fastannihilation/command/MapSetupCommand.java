@@ -1,6 +1,6 @@
 package com.github.imthenico.fastannihilation.command;
 
-import com.github.imthenico.annihilation.api.cache.MapModelCache;
+import com.github.imthenico.annihilation.api.cache.ConfigurableModelCache;
 import com.github.imthenico.annihilation.api.editor.SetupContext;
 import com.github.imthenico.annihilation.api.editor.SetupManager;
 import com.github.imthenico.annihilation.api.map.model.NexusModel;
@@ -29,20 +29,20 @@ import static com.github.imthenico.annihilation.api.util.MapPropertiesHelper.*;
 @Command(names = "mapeditor")
 public class MapSetupCommand implements CommandClass {
 
-    private final SetupManager<?> setupManager;
-    private final MapModelCache mapModelCache;
+    private final SetupManager setupManager;
+    private final ConfigurableModelCache configurableModelCache;
 
     public MapSetupCommand(
-            SetupManager<?> setupManager,
-            MapModelCache mapModelCache
+            SetupManager setupManager,
+            ConfigurableModelCache configurableModelCache
     ) {
         this.setupManager = setupManager;
-        this.mapModelCache = mapModelCache;
+        this.configurableModelCache = configurableModelCache;
     }
 
     @Command(names = "editmap")
     public boolean setupMap(@Sender AnniPlayer anniPlayer, String mapName) {
-        ConfigurableModel mapModel = mapModelCache.getModel(mapName);
+        ConfigurableModel mapModel = configurableModelCache.getModel(mapName);
         Player player = anniPlayer.getPlayer();
 
         if (mapModel == null) {
@@ -52,11 +52,11 @@ public class MapSetupCommand implements CommandClass {
 
         try {
             setupManager.setupMap(anniPlayer, mapModel);
-            World world = mapModel.getWorldTemplate().getWorld();
+            World world = mapModel.getMainWorld().getWorld();
 
             player.teleport(world.getSpawnLocation());
 
-            player.sendMessage("You're now editing " + mapModel.getDisplayName());
+            player.sendMessage("You're now editing " + mapModel.getId());
         } catch (UnsupportedOperationException e) {
             player.sendMessage("You're already editing a map");
         }
@@ -69,7 +69,7 @@ public class MapSetupCommand implements CommandClass {
             @Sender Player player,
             TeamColor color
     ) {
-        SetupContext<?> context = getSetupContext(player);
+        SetupContext context = getSetupContext(player);
 
         if (context == null)
             return true;
@@ -99,7 +99,7 @@ public class MapSetupCommand implements CommandClass {
             TeamColor teamColor,
             int health
     ) {
-        SetupContext<?> context = getSetupContext(player);
+        SetupContext context = getSetupContext(player);
 
         if (context == null)
             return true;
@@ -126,8 +126,8 @@ public class MapSetupCommand implements CommandClass {
         return true;
     }
 
-    private SetupContext<?> getSetupContext(Player player) {
-        SetupContext<?> setupContext = setupManager.getSession(player);
+    private SetupContext getSetupContext(Player player) {
+        SetupContext setupContext = setupManager.getSession(player);
 
         if (setupContext == null) {
             player.sendMessage("You're not editing any maps.");

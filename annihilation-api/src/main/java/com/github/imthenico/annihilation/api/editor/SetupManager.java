@@ -6,20 +6,20 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface SetupManager<T extends ConfigurableModel> {
+public interface SetupManager {
 
-    SetupContext<T> getSession(T model);
+    SetupContext getSession(ConfigurableModel model);
 
-    SetupContext<T> getSession(Player player);
+    SetupContext getSession(Player player);
 
-    default SetupContext<T> getSession(AnniPlayer player) {
+    default SetupContext getSession(AnniPlayer player) {
         return getSession(player.getPlayer());
     }
 
-    SetupContext<T> setupMap(AnniPlayer player, T map) throws UnsupportedOperationException;
+    SetupContext setupMap(AnniPlayer player, ConfigurableModel map) throws UnsupportedOperationException;
 
-    boolean terminateSession(T model);
+    boolean terminateSession(ConfigurableModel model);
 
-    CompletableFuture<?> saveChanges(T model) throws IllegalArgumentException;
+    CompletableFuture<?> saveChanges(ConfigurableModel model) throws IllegalArgumentException;
 
 }
