@@ -1,6 +1,5 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.game.GameInstance;
 import com.github.imthenico.annihilation.api.ingame.MatchMap;
@@ -9,6 +8,8 @@ import com.github.imthenico.annihilation.api.property.PropertyInterpreter;
 import com.github.imthenico.annihilation.api.phase.PhaseExpansion;
 import com.github.imthenico.annihilation.api.player.PlayerEventHandler;
 import com.github.imthenico.annihilation.api.player.PlayerSetup;
+import com.github.imthenico.annihilation.api.scheduler.Scheduler;
+import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.simplecommons.util.Validate;
 
 import java.util.function.Function;
@@ -19,15 +20,16 @@ public interface MatchFactory {
 
     String getProductTypeName();
 
-    static MatchFactory.Builder builder(AnnihilationAPI annihilationAPI, String matchTypeName) {
+    static MatchFactory.Builder builder(UtilityPack utilityPack, Scheduler scheduler, String matchTypeName) {
         return new SimpleMatchCreatorBuilder(
-                Validate.notNull(annihilationAPI, "annihilation"),
+                Validate.notNull(utilityPack, "utilityPack"),
+                Validate.notNull(scheduler, "scheduler"),
                 Validate.notNull(matchTypeName, "matchTypeName")
         );
     }
 
-    static MatchFactory create(AnnihilationAPI annihilationAPI, String matchTypeName) {
-        return builder(annihilationAPI, matchTypeName).build();
+    static MatchFactory create(UtilityPack utilityPack, Scheduler scheduler, String matchTypeName) {
+        return builder(utilityPack, scheduler, matchTypeName).build();
     }
 
     interface Builder {

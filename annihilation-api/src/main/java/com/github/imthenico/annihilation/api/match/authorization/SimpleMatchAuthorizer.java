@@ -1,10 +1,11 @@
 package com.github.imthenico.annihilation.api.match.authorization;
 
-import com.github.imthenico.annihilation.api.AnnihilationAPI;
+import com.github.imthenico.annihilation.api.cache.ConfigurableModelCache;
 import com.github.imthenico.annihilation.api.game.GameInstance;
+import com.github.imthenico.annihilation.api.game.GameInstanceManager;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
+import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
 import com.github.imthenico.annihilation.api.util.VoteCounter;
-import com.github.imthenico.simplecommons.util.Validate;
 
 import java.util.*;
 
@@ -13,10 +14,10 @@ import static com.github.imthenico.annihilation.api.util.GameValidation.*;
 
 public class SimpleMatchAuthorizer implements MatchAuthorizer {
 
-    private final AnnihilationAPI annihilationAPI;
+    private final ConfigurableModelCache modelCache;
 
-    public SimpleMatchAuthorizer(AnnihilationAPI annihilationAPI) {
-        this.annihilationAPI = Validate.notNull(annihilationAPI);
+    public SimpleMatchAuthorizer(ConfigurableModelCache modelCache) {
+        this.modelCache = modelCache;
     }
 
     @Override
@@ -29,7 +30,7 @@ public class SimpleMatchAuthorizer implements MatchAuthorizer {
 
         ConfigurableModel mostVoted = playerVotes.mostVoted();
 
-        if (!hasAvailableMaps(game, annihilationAPI.getMapManager())) {
+        if (!hasAvailableMaps(game, modelCache)) {
             messagePath = "match-cannot-start.no-available-maps";
             authorized = false;
             reason = "No available maps";

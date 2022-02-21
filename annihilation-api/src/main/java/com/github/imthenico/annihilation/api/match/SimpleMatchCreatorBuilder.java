@@ -1,6 +1,5 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.converter.ConverterToMatchMap;
 import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.game.GameInstance;
@@ -12,6 +11,7 @@ import com.github.imthenico.annihilation.api.player.PlayerEventHandler;
 import com.github.imthenico.annihilation.api.player.PlayerSetup;
 import com.github.imthenico.annihilation.api.player.SimplePlayerEventHandler;
 import com.github.imthenico.annihilation.api.player.SimplePlayerSetup;
+import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.simplecommons.util.Validate;
 import me.yushust.message.MessageHandler;
@@ -23,7 +23,7 @@ import java.util.function.Function;
 public class SimpleMatchCreatorBuilder implements MatchFactory.Builder {
 
     private final Map<Class<?>, PropertyInterpreter<?, ?>> interpreterMap = new HashMap<>();
-    private final AnnihilationAPI annihilationAPI;
+    private final Scheduler scheduler;
     private final String matchTypeName;
 
     private PhaseExpansion phaseExpansion;
@@ -34,20 +34,20 @@ public class SimpleMatchCreatorBuilder implements MatchFactory.Builder {
     private ModelConverter<MatchMap> modelConverter;
 
     SimpleMatchCreatorBuilder(
-            AnnihilationAPI annihilationAPI,
+            UtilityPack utilityPack,
+            Scheduler scheduler,
             String matchTypeName
     ) {
-        this.annihilationAPI = annihilationAPI;
+        this.scheduler = scheduler;
         this.matchTypeName = matchTypeName;
 
-        UtilityPack utilityPack = annihilationAPI.utilities();
         MessageHandler messageHandler = utilityPack.getMessageHandler();
 
         this.endingProvider = (game) -> new DefaultMatchClosingStage(game.getRules().getTimeToEnd());
         this.eventHandler = new DefaultMatchEventHandler(messageHandler);
         this.phaseExpansion = new DefaultPhaseExpansion(messageHandler);
         this.playerSetup = new SimplePlayerSetup();
-        this.playerEventHandler = new SimplePlayerEventHandler(messageHandler, annihilationAPI.getScheduler());
+        this.playerEventHandler = new SimplePlayerEventHandler(messageHandler, scheduler);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class SimpleMatchCreatorBuilder implements MatchFactory.Builder {
                 phaseExpansion,
                 playerSetup,
                 playerEventHandler,
-                annihilationAPI,
+                scheduler,
                 matchTypeName
         );
     }

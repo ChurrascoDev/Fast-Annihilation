@@ -37,7 +37,7 @@ public class DefaultMatchFactory implements MatchFactory {
             PhaseExpansion expansion,
             PlayerSetup playerSetup,
             PlayerEventHandler playerEventHandler,
-            AnnihilationAPI annihilationAPI,
+            Scheduler scheduler,
             String matchTypeName
     ) {
         this.toMatchMapConverter = toMatchMapConverter;
@@ -46,7 +46,7 @@ public class DefaultMatchFactory implements MatchFactory {
         this.phaseExpansion = expansion;
         this.playerSetup = playerSetup;
         this.playerEventHandler = playerEventHandler;
-        this.scheduler = annihilationAPI.getScheduler();
+        this.scheduler = scheduler;
         this.matchTypeName = matchTypeName;
     }
 

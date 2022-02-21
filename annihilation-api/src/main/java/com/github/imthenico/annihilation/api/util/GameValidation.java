@@ -1,5 +1,6 @@
 package com.github.imthenico.annihilation.api.util;
 
+import com.github.imthenico.annihilation.api.cache.ConfigurableModelCache;
 import com.github.imthenico.annihilation.api.game.GameInstance;
 import com.github.imthenico.annihilation.api.game.PreMatchStage;
 import com.github.imthenico.annihilation.api.map.model.NexusModel;
@@ -15,16 +16,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface GameValidation {
 
-    static boolean hasAvailableMaps(GameInstance game, ConfigurableModelService modelService) {
+    static boolean hasAvailableMaps(GameInstance game, ConfigurableModelCache modelService) {
         GameInstance.Rules rules = game.getRules();
         List<String> allowedMapNames = rules.getAllowedMaps();
         Set<ConfigurableModel> availableMaps = new HashSet<>();
 
         if (allowedMapNames.isEmpty()) {
-            modelService.cache().getModels().forEach((k, v) -> availableMaps.add(v));
+            modelService.getModels().forEach((k, v) -> availableMaps.add(v));
         } else {
             for (String allowedMapName : allowedMapNames) {
-                ConfigurableModel configurableModel = modelService.cache().getModel(allowedMapName);
+                ConfigurableModel configurableModel = modelService.getModel(allowedMapName);
 
                 if (configurableModel == null || !ModelUtil.hasTag(configurableModel, "map-model"))
                     continue;
