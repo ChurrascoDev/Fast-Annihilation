@@ -1,27 +1,20 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.Annihilation;
+import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.event.MatchCreationEvent;
 import com.github.imthenico.annihilation.api.game.GameInstance;
-import com.github.imthenico.annihilation.api.ingame.SimpleMatchMap;
 import com.github.imthenico.annihilation.api.ingame.MatchMap;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 import com.github.imthenico.annihilation.api.phase.DefaultPhaseManager;
 import com.github.imthenico.annihilation.api.phase.PhaseExpansion;
 import com.github.imthenico.annihilation.api.player.PlayerEventHandler;
 import com.github.imthenico.annihilation.api.player.PlayerSetup;
-import com.github.imthenico.annihilation.api.property.PropertyKey;
-import com.github.imthenico.annihilation.api.property.PropertiesContainer;
-import com.github.imthenico.annihilation.api.property.PropertyInterpreter;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.util.MapPropertiesHelper;
-import com.github.imthenico.annihilation.api.world.SimpleWorld;
-import com.github.imthenico.annihilation.api.world.WorldTemplate;
 import com.github.imthenico.simplecommons.util.Validate;
 import org.bukkit.Bukkit;
 
-import java.util.*;
 import java.util.function.Function;
 
 public class DefaultMatchFactory implements MatchFactory {
@@ -44,7 +37,7 @@ public class DefaultMatchFactory implements MatchFactory {
             PhaseExpansion expansion,
             PlayerSetup playerSetup,
             PlayerEventHandler playerEventHandler,
-            Annihilation annihilation,
+            AnnihilationAPI annihilationAPI,
             String matchTypeName
     ) {
         this.toMatchMapConverter = toMatchMapConverter;
@@ -53,7 +46,7 @@ public class DefaultMatchFactory implements MatchFactory {
         this.phaseExpansion = expansion;
         this.playerSetup = playerSetup;
         this.playerEventHandler = playerEventHandler;
-        this.scheduler = annihilation.getScheduler();
+        this.scheduler = annihilationAPI.getScheduler();
         this.matchTypeName = matchTypeName;
     }
 

@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.Annihilation;
+import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.converter.ConverterToMatchMap;
 import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.game.GameInstance;
@@ -23,7 +23,7 @@ import java.util.function.Function;
 public class SimpleMatchCreatorBuilder implements MatchFactory.Builder {
 
     private final Map<Class<?>, PropertyInterpreter<?, ?>> interpreterMap = new HashMap<>();
-    private final Annihilation annihilation;
+    private final AnnihilationAPI annihilationAPI;
     private final String matchTypeName;
 
     private PhaseExpansion phaseExpansion;
@@ -34,20 +34,20 @@ public class SimpleMatchCreatorBuilder implements MatchFactory.Builder {
     private ModelConverter<MatchMap> modelConverter;
 
     SimpleMatchCreatorBuilder(
-            Annihilation annihilation,
+            AnnihilationAPI annihilationAPI,
             String matchTypeName
     ) {
-        this.annihilation = annihilation;
+        this.annihilationAPI = annihilationAPI;
         this.matchTypeName = matchTypeName;
 
-        UtilityPack utilityPack = annihilation.utilities();
+        UtilityPack utilityPack = annihilationAPI.utilities();
         MessageHandler messageHandler = utilityPack.getMessageHandler();
 
         this.endingProvider = (game) -> new DefaultMatchClosingStage(game.getRules().getTimeToEnd());
         this.eventHandler = new DefaultMatchEventHandler(messageHandler);
         this.phaseExpansion = new DefaultPhaseExpansion(messageHandler);
         this.playerSetup = new SimplePlayerSetup();
-        this.playerEventHandler = new SimplePlayerEventHandler(messageHandler, annihilation.getScheduler());
+        this.playerEventHandler = new SimplePlayerEventHandler(messageHandler, annihilationAPI.getScheduler());
     }
 
     @Override
@@ -120,7 +120,7 @@ public class SimpleMatchCreatorBuilder implements MatchFactory.Builder {
                 phaseExpansion,
                 playerSetup,
                 playerEventHandler,
-                annihilation,
+                annihilationAPI,
                 matchTypeName
         );
     }

@@ -8,7 +8,7 @@ import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.annihilation.api.world.LocationReference;
 
-public interface Annihilation {
+public interface AnnihilationAPI {
 
     UtilityPack utilities();
 

@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.match.authorization;
 
-import com.github.imthenico.annihilation.api.Annihilation;
+import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.game.GameInstance;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 import com.github.imthenico.annihilation.api.util.VoteCounter;
@@ -13,10 +13,10 @@ import static com.github.imthenico.annihilation.api.util.GameValidation.*;
 
 public class SimpleMatchAuthorizer implements MatchAuthorizer {
 
-    private final Annihilation annihilation;
+    private final AnnihilationAPI annihilationAPI;
 
-    public SimpleMatchAuthorizer(Annihilation annihilation) {
-        this.annihilation = Validate.notNull(annihilation);
+    public SimpleMatchAuthorizer(AnnihilationAPI annihilationAPI) {
+        this.annihilationAPI = Validate.notNull(annihilationAPI);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class SimpleMatchAuthorizer implements MatchAuthorizer {
 
         ConfigurableModel mostVoted = playerVotes.mostVoted();
 
-        if (!hasAvailableMaps(game, annihilation.getMapManager())) {
+        if (!hasAvailableMaps(game, annihilationAPI.getMapManager())) {
             messagePath = "match-cannot-start.no-available-maps";
             authorized = false;
             reason = "No available maps";

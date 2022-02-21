@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.game;
 
-import com.github.imthenico.annihilation.api.Annihilation;
+import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.converter.ConverterToGameLobby;
 import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.match.MatchFactory;
@@ -14,18 +14,18 @@ import java.util.Map;
 
 public class SimpleGameRoomFactory implements AnnihilationGameFactory {
 
-    private final Annihilation annihilation;
+    private final AnnihilationAPI annihilationAPI;
     private final Map<String, MatchFactory> matchCreators;
     private ModelConverter<GameLobby> toLobbyConverter;
 
     public SimpleGameRoomFactory(
-            Annihilation annihilation,
+            AnnihilationAPI annihilationAPI,
             GameInstanceManager gameInstanceManager
     ) {
-        this.annihilation = Validate.notNull(annihilation);
+        this.annihilationAPI = Validate.notNull(annihilationAPI);
         this.matchCreators = new HashMap<>();
 
-        matchCreators.put("default", MatchFactory.create(annihilation, "default"));
+        matchCreators.put("default", MatchFactory.create(annihilationAPI, "default"));
         this.toLobbyConverter = new ConverterToGameLobby(gameInstanceManager);
     }
 
@@ -48,7 +48,7 @@ public class SimpleGameRoomFactory implements AnnihilationGameFactory {
                 toLobbyConverter.convert(lobbyModel, Collections.singletonMap("gameId", id)),
                 id,
                 GameInstance.DEFAULT_RULES,
-                new SimpleMatchAuthorizer(annihilation),
+                new SimpleMatchAuthorizer(annihilationAPI),
                 matchFactory,
                 new GameInstance.Options()
         );

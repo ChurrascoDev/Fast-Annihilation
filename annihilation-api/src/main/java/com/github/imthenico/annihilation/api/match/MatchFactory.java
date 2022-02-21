@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.Annihilation;
+import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.converter.ModelConverter;
 import com.github.imthenico.annihilation.api.game.GameInstance;
 import com.github.imthenico.annihilation.api.ingame.MatchMap;
@@ -19,15 +19,15 @@ public interface MatchFactory {
 
     String getProductTypeName();
 
-    static MatchFactory.Builder builder(Annihilation annihilation, String matchTypeName) {
+    static MatchFactory.Builder builder(AnnihilationAPI annihilationAPI, String matchTypeName) {
         return new SimpleMatchCreatorBuilder(
-                Validate.notNull(annihilation, "annihilation"),
+                Validate.notNull(annihilationAPI, "annihilation"),
                 Validate.notNull(matchTypeName, "matchTypeName")
         );
     }
 
-    static MatchFactory create(Annihilation annihilation, String matchTypeName) {
-        return builder(annihilation, matchTypeName).build();
+    static MatchFactory create(AnnihilationAPI annihilationAPI, String matchTypeName) {
+        return builder(annihilationAPI, matchTypeName).build();
     }
 
     interface Builder {

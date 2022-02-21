@@ -1,6 +1,6 @@
 package com.github.imthenico.fastannihilation;
 
-import com.github.imthenico.annihilation.api.Annihilation;
+import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.game.AnnihilationGameFactory;
 import com.github.imthenico.annihilation.api.game.SimpleGameInstanceManager;
 import com.github.imthenico.annihilation.api.game.SimpleGameRoomFactory;
@@ -13,7 +13,7 @@ import com.github.imthenico.annihilation.api.world.LocationReference;
 import com.github.imthenico.simplecommons.util.Validate;
 import org.bukkit.Bukkit;
 
-public class FastAnnihilation implements Annihilation {
+public class FastAnnihilationAPI implements AnnihilationAPI {
 
     private final UtilityPack utilityPack;
     private final PlayerRegistry playerRegistry;
@@ -23,7 +23,7 @@ public class FastAnnihilation implements Annihilation {
     private final Scheduler scheduler;
     private LocationReference lobbySpawn;
 
-    public FastAnnihilation(
+    public FastAnnihilationAPI(
             UtilityPack utilityPack,
             PlayerRegistry playerRegistry,
             ConfigurableModelManager configurableModelManager,

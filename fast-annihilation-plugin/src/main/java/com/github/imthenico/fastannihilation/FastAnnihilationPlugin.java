@@ -39,7 +39,7 @@ import static com.github.imthenico.fastannihilation.delegate.DelegatingFactory.*
 
 public final class FastAnnihilationPlugin extends JavaPlugin {
 
-    private FastAnnihilation fastAnnihilation;
+    private FastAnnihilationAPI fastAnnihilation;
     private Configuration configuration;
     private PluginHandler pluginHandler;
 
@@ -86,7 +86,7 @@ public final class FastAnnihilationPlugin extends JavaPlugin {
                 mapModelStorage
         );
 
-        this.fastAnnihilation = new FastAnnihilation(
+        this.fastAnnihilation = new FastAnnihilationAPI(
                 new UtilityPack(messageHandler),
                 playerRegistry,
                 configurableModelManager,
@@ -112,7 +112,7 @@ public final class FastAnnihilationPlugin extends JavaPlugin {
         return configuration;
     }
 
-    public FastAnnihilation getAPI() {
+    public FastAnnihilationAPI getAPI() {
         return fastAnnihilation;
     }
 
