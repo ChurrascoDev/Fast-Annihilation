@@ -6,11 +6,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleMapModelCache implements MapModelCache {
+public class SimpleConfigurableModelCache implements ConfigurableModelCache {
 
     private final Map<String, ConfigurableModel> models;
 
-    public SimpleMapModelCache() {
+    public SimpleConfigurableModelCache() {
         this.models = new HashMap<>();
     }
 

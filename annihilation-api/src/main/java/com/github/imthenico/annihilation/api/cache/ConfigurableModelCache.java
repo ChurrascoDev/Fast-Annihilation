@@ -4,7 +4,7 @@ import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 
 import java.util.Map;
 
-public interface MapModelCache {
+public interface ConfigurableModelCache {
 
     void addModel(ConfigurableModel model);
 

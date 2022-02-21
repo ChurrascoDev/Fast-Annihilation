@@ -1,4 +1,4 @@
-package com.github.imthenico.annihilation.api.loader;
+package com.github.imthenico.annihilation.api.repository;
 
 import com.github.imthenico.annihilation.api.exception.NoPropertiesFoundException;
 import com.github.imthenico.annihilation.api.exception.UnknownWorldException;
@@ -24,19 +24,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
-public class SimpleMapStorage implements MapModelStorage {
+public class ConfigurableModelRepository extends AbstractRepository<ConfigurableModel> {
 
     private final AbstractRepository<TreeNode> propertiesRepository;
     private final PropertyMapping propertyMapping;
     private final WorldTemplateLoader worldTemplateLoader;
     private final Scheduler scheduler;
 
-    public SimpleMapStorage(
+    public ConfigurableModelRepository(
             AbstractRepository<TreeNode> propertiesRepository,
             PropertyMapping propertyMapping,
             WorldTemplateLoader worldTemplateLoader,
             Scheduler scheduler
     ) {
+        super(null, ConfigurableModel.class);
         this.propertiesRepository = propertiesRepository;
         this.propertyMapping = propertyMapping;
         this.worldTemplateLoader = worldTemplateLoader;
