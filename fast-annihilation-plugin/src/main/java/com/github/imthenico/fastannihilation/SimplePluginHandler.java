@@ -2,8 +2,8 @@ package com.github.imthenico.fastannihilation;
 
 import com.github.imthenico.annihilation.api.PluginHandler;
 import com.github.imthenico.annihilation.api.concurrent.CompletableFutures;
-import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
 import com.github.imthenico.annihilation.api.config.AnniConfig;
+import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
 import com.github.imthenico.annihilation.api.storage.AnniStorage;
 import com.github.imthenico.annihilation.api.storage.StorageHandlerProvider;
 import com.github.imthenico.annihilation.api.storage.StorageHandlerProviderFactory;
@@ -89,10 +89,10 @@ public class SimplePluginHandler implements PluginHandler {
 
     @Override
     public void reloadMaps() {
-        ConfigurableModelManager configurableModelManager = plugin.getAPI().getMapManager();
+        ConfigurableModelService modelService = plugin.getAPI().modelService();
 
         try {
-            handleException(configurableModelManager.reloadMaps(20), "Unable to reload maps, disabling...");
+            handleException(modelService.reloadModels(30), "Unable to reload maps, disabling...");
         } catch (Exception e) {
             Bukkit.getPluginManager().disablePlugin(plugin);
         }
@@ -103,7 +103,6 @@ public class SimplePluginHandler implements PluginHandler {
     public void reloadMessages() {
         MessageHandler messageHandler = plugin.getAPI().utilities().getMessageHandler();
         MessageSource messageSource = messageHandler.getSource();
-
         ((AbstractCachedFileSource<YamlConfiguration>) messageSource).invalidateCaches();
     }
 

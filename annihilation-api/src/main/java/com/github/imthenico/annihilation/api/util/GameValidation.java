@@ -2,12 +2,11 @@ package com.github.imthenico.annihilation.api.util;
 
 import com.github.imthenico.annihilation.api.game.GameInstance;
 import com.github.imthenico.annihilation.api.game.PreMatchStage;
-import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
 import com.github.imthenico.annihilation.api.map.model.NexusModel;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 import com.github.imthenico.annihilation.api.property.PropertiesContainer;
-import com.github.imthenico.annihilation.api.property.PropertyKey;
 import com.github.imthenico.annihilation.api.property.PropertyKeys;
+import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.simplecommons.minecraft.LocationModel;
 
@@ -16,16 +15,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface GameValidation {
 
-    static boolean hasAvailableMaps(GameInstance game, ConfigurableModelManager configurableModelManager) {
+    static boolean hasAvailableMaps(GameInstance game, ConfigurableModelService modelService) {
         GameInstance.Rules rules = game.getRules();
         List<String> allowedMapNames = rules.getAllowedMaps();
         Set<ConfigurableModel> availableMaps = new HashSet<>();
 
         if (allowedMapNames.isEmpty()) {
-            configurableModelManager.getModels().forEach((k, v) -> availableMaps.add(v));
+            modelService.cache().getModels().forEach((k, v) -> availableMaps.add(v));
         } else {
             for (String allowedMapName : allowedMapNames) {
-                ConfigurableModel configurableModel = configurableModelManager.getModel(allowedMapName);
+                ConfigurableModel configurableModel = modelService.cache().getModel(allowedMapName);
 
                 if (configurableModel == null || !ModelUtil.hasTag(configurableModel, "map-model"))
                     continue;
