@@ -1,5 +1,6 @@
 package com.github.imthenico.fastannihilation;
 
+import com.github.imthenico.annihilation.api.PluginHandler;
 import com.github.imthenico.annihilation.api.cache.SimpleMapModelCache;
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
 import com.github.imthenico.annihilation.api.lang.AnniPlayerAdapter;
@@ -16,8 +17,8 @@ import com.github.imthenico.annihilation.api.provider.WorldTemplateLoader;
 import com.github.imthenico.annihilation.api.scheduler.SimpleBukkitScheduler;
 import com.github.imthenico.annihilation.api.task.GameTimerUpdater;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
-import com.github.imthenico.fastannihilation.config.AnniConfig;
-import com.github.imthenico.fastannihilation.storage.AnniStorage;
+import com.github.imthenico.annihilation.api.config.AnniConfig;
+import com.github.imthenico.annihilation.api.storage.AnniStorage;
 import com.github.imthenico.fastannihilation.template.SlimeWorldTemplateLoader;
 import com.github.imthenico.simplecommons.bukkit.configuration.Configuration;
 import com.grinderwolf.swm.api.SlimePlugin;

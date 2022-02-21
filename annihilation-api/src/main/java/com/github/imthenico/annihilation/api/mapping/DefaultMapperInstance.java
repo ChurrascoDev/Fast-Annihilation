@@ -1,4 +1,4 @@
-package com.github.imthenico.fastannihilation.mapping;
+package com.github.imthenico.annihilation.api.mapping;
 
 import com.github.imthenico.simplecommons.data.mapper.GenericMapper;
 import com.github.imthenico.simplecommons.data.mapper.gson.GsonMapper;

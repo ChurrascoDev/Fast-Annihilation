@@ -1,4 +1,4 @@
-package com.github.imthenico.fastannihilation.storage;
+package com.github.imthenico.annihilation.api.storage;
 
 import com.github.imthenico.simplecommons.data.key.SourceKey;
 import com.github.imthenico.simplecommons.data.repository.AbstractRepository;

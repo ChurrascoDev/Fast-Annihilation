@@ -1,7 +1,6 @@
-package com.github.imthenico.fastannihilation.config;
+package com.github.imthenico.annihilation.api.config;
 
-import com.github.imthenico.fastannihilation.mapping.DefaultMapperInstance;
-import com.github.imthenico.fastannihilation.storage.StorageSourceType;
+import com.github.imthenico.annihilation.api.mapping.DefaultMapperInstance;
 import com.github.imthenico.simplecommons.data.db.UserCredential;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;

@@ -1,7 +1,7 @@
 package com.github.imthenico.fastannihilation.delegate;
 
-import com.github.imthenico.fastannihilation.storage.AnniStorage;
-import com.github.imthenico.fastannihilation.storage.StorageSource;
+import com.github.imthenico.annihilation.api.storage.AnniStorage;
+import com.github.imthenico.annihilation.api.storage.StorageSource;
 import com.github.imthenico.simplecommons.data.node.TreeNode;
 import com.github.imthenico.simplecommons.data.repository.AbstractRepository;
 

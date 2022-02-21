@@ -1,4 +1,4 @@
-package com.github.imthenico.fastannihilation.storage;
+package com.github.imthenico.annihilation.api.storage;
 
 public class StorageSource {
 

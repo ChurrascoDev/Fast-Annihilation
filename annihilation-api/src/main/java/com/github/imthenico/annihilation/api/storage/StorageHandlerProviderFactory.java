@@ -1,7 +1,7 @@
-package com.github.imthenico.fastannihilation.storage;
+package com.github.imthenico.annihilation.api.storage;
 
-import com.github.imthenico.fastannihilation.storage.impl.FileStorageHandlerProvider;
-import com.github.imthenico.fastannihilation.storage.impl.SQLStorageHandlerProvider;
+import com.github.imthenico.annihilation.api.storage.impl.FileStorageHandlerProvider;
+import com.github.imthenico.annihilation.api.storage.impl.SQLStorageHandlerProvider;
 
 import java.util.Locale;
 

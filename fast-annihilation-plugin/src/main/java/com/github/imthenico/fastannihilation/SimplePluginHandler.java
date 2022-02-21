@@ -1,11 +1,12 @@
 package com.github.imthenico.fastannihilation;
 
+import com.github.imthenico.annihilation.api.PluginHandler;
 import com.github.imthenico.annihilation.api.concurrent.CompletableFutures;
 import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
-import com.github.imthenico.fastannihilation.config.AnniConfig;
-import com.github.imthenico.fastannihilation.storage.AnniStorage;
-import com.github.imthenico.fastannihilation.storage.StorageHandlerProvider;
-import com.github.imthenico.fastannihilation.storage.StorageHandlerProviderFactory;
+import com.github.imthenico.annihilation.api.config.AnniConfig;
+import com.github.imthenico.annihilation.api.storage.AnniStorage;
+import com.github.imthenico.annihilation.api.storage.StorageHandlerProvider;
+import com.github.imthenico.annihilation.api.storage.StorageHandlerProviderFactory;
 import com.github.imthenico.simplecommons.bukkit.configuration.Configuration;
 import com.github.imthenico.simplecommons.util.Validate;
 import me.yushust.message.MessageHandler;
@@ -13,6 +14,7 @@ import me.yushust.message.source.AbstractCachedFileSource;
 import me.yushust.message.source.MessageSource;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.time.Duration;
@@ -103,6 +105,12 @@ public class SimplePluginHandler implements PluginHandler {
         MessageSource messageSource = messageHandler.getSource();
 
         ((AbstractCachedFileSource<YamlConfiguration>) messageSource).invalidateCaches();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends JavaPlugin> T getPlugin() {
+        return (T) plugin;
     }
 
     @Override

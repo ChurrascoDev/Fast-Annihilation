@@ -1,8 +1,9 @@
-package com.github.imthenico.fastannihilation;
+package com.github.imthenico.annihilation.api;
 
-import com.github.imthenico.fastannihilation.config.AnniConfig;
-import com.github.imthenico.fastannihilation.storage.AnniStorage;
+import com.github.imthenico.annihilation.api.config.AnniConfig;
+import com.github.imthenico.annihilation.api.storage.AnniStorage;
 import com.github.imthenico.simplecommons.bukkit.configuration.Configuration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.function.Supplier;
@@ -26,5 +27,7 @@ public interface PluginHandler {
     void reloadMessages();
 
     void reloadAll();
+
+    <T extends JavaPlugin> T getPlugin();
 
 }

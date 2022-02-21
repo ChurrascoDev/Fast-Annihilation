@@ -1,8 +1,8 @@
 package com.github.imthenico.annihilation.api;
 
 import com.github.imthenico.annihilation.api.game.AnnihilationGameFactory;
-import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
 import com.github.imthenico.annihilation.api.game.GameInstanceManager;
+import com.github.imthenico.annihilation.api.map.ConfigurableModelManager;
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
@@ -25,4 +25,5 @@ public interface Annihilation {
     LocationReference getLobbySpawn();
 
     void setLobbySpawn(LocationReference lobbySpawn);
+
 }

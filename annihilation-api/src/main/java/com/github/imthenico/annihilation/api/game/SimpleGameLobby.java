@@ -4,7 +4,6 @@ import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 import com.github.imthenico.annihilation.api.model.SimpleLoadedModel;
 import com.github.imthenico.annihilation.api.property.PropertiesContainer;
 import com.github.imthenico.annihilation.api.world.SimpleWorld;
-import com.github.imthenico.simplecommons.util.Validate;
 
 import java.util.Map;
 
