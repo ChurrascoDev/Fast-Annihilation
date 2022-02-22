@@ -50,10 +50,8 @@ public class SimpleGameRoomFactory implements GameFactory {
         return new SimpleGameInstance(
                 toLobbyConverter.convert(lobbyModel, Collections.singletonMap("gameId", id)),
                 id,
-                GameInstance.DEFAULT_RULES,
                 new SimpleMatchAuthorizer(modelCache),
-                matchFactory,
-                new GameInstance.Options()
+                matchFactory
         );
     }
 

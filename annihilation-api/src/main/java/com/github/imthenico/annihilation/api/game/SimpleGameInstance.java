@@ -6,6 +6,8 @@ import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer
 import com.github.imthenico.annihilation.api.match.MatchFactory;
 import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
+import com.github.imthenico.annihilation.api.property.PropertiesContainer;
+import com.github.imthenico.annihilation.api.property.SimplePropertiesContainer;
 import com.github.imthenico.simplecommons.util.Validate;
 
 import java.util.*;
@@ -20,6 +22,7 @@ public class SimpleGameInstance implements GameInstance {
     private final MatchAuthorizer simpleMatchAuthorizer;
     private final MatchFactory matchFactory;
     private final Options options;
+    private final PropertiesContainer propertiesContainer;
 
     private PreMatchStage preparationStage;
     private Match match;
@@ -29,18 +32,37 @@ public class SimpleGameInstance implements GameInstance {
             GameLobby gameLobby,
             String id,
             Rules rules,
-            MatchAuthorizer simpleMatchAuthorizer,
+            MatchAuthorizer matchAuthorizer,
             MatchFactory matchFactory,
-            Options options
+            Options options,
+            PropertiesContainer propertiesContainer
     ) {
         this.gameLobby = Validate.notNull(gameLobby);
         this.id = Validate.notNull(id);
         this.rules = Validate.notNull(rules);
-        this.simpleMatchAuthorizer = Validate.notNull(simpleMatchAuthorizer);
+        this.simpleMatchAuthorizer = Validate.notNull(matchAuthorizer);
         this.matchFactory = Validate.notNull(matchFactory);
         this.options = Validate.defIfNull(options, new Options());
+        this.propertiesContainer = Validate.notNull(propertiesContainer);
         this.players = new HashSet<>();
         this.preparationStage = new SimplePreMatchStage(rules.getTimeToStart());
+    }
+
+    public SimpleGameInstance(
+            GameLobby gameLobby,
+            String id,
+            MatchAuthorizer simpleMatchAuthorizer,
+            MatchFactory matchFactory
+    ) {
+        this(
+                gameLobby,
+                id,
+                GameInstance.defaultRules(),
+                simpleMatchAuthorizer,
+                matchFactory,
+                new Options(),
+                new SimplePropertiesContainer()
+        );
     }
 
     @Override
@@ -175,5 +197,10 @@ public class SimpleGameInstance implements GameInstance {
         }
 
         return anniPlayers;
+    }
+
+    @Override
+    public PropertiesContainer getProperties() {
+        return propertiesContainer;
     }
 }

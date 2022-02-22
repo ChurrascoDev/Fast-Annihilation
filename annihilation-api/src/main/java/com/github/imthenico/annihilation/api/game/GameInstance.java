@@ -4,14 +4,13 @@ import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.match.authorization.AuthorizationResult;
 import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
+import com.github.imthenico.annihilation.api.property.PropertyHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface GameInstance {
-
-    Rules DEFAULT_RULES = new Rules(30, 10, 16, 40, 4, 10, null, null);
+public interface GameInstance extends PropertyHolder {
 
     GameLobby getLobby();
 
@@ -172,5 +171,9 @@ public interface GameInstance {
         STARTING,
         IN_GAME,
         ENDING;
+    }
+
+    static Rules defaultRules() {
+        return new Rules(30, 10, 16, 40, 4, 10, null, null);
     }
 }
