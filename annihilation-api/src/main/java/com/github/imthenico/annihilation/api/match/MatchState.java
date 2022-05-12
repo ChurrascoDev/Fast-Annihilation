@@ -3,10 +3,10 @@ package com.github.imthenico.annihilation.api.match;
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
 import com.github.imthenico.annihilation.api.team.MatchTeam;
 import com.github.imthenico.annihilation.api.team.TeamColor;
-import com.github.imthenico.simplecommons.util.Validate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MatchState {
@@ -22,8 +22,8 @@ public class MatchState {
             boolean tie,
             Match match
     ) {
-        this.alivePlayers = Validate.notNull(alivePlayers);
-        this.aliveTeams = Validate.notNull(aliveTeams);
+        this.alivePlayers = Objects.requireNonNull(alivePlayers);
+        this.aliveTeams = Objects.requireNonNull(aliveTeams);
         this.tie = tie;
         this.match = match;
     }

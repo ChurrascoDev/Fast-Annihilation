@@ -1,72 +1,92 @@
 package com.github.imthenico.annihilation.api.game;
 
-import com.github.imthenico.annihilation.api.cache.ConfigurableModelCache;
-import com.github.imthenico.annihilation.api.converter.ConverterToGameLobby;
-import com.github.imthenico.annihilation.api.converter.ModelConverter;
+import com.github.imthenico.annihilation.api.AnnihilationAPI;
+import com.github.imthenico.annihilation.api.model.ModelCache;
+import com.github.imthenico.annihilation.api.model.lobby.GameLobby;
+import com.github.imthenico.annihilation.api.model.lobby.GameLobbyData;
+import com.github.imthenico.annihilation.api.match.DefaultMatchFactory;
 import com.github.imthenico.annihilation.api.match.MatchFactory;
-import com.github.imthenico.annihilation.api.match.authorization.SimpleMatchAuthorizer;
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
-import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
-import com.github.imthenico.simplecommons.util.Validate;
+import com.github.imthenico.annihilation.api.world.LocationReference;
+import com.github.imthenico.gmlib.GameMapHandler;
+import com.github.imthenico.gmlib.MapModel;
+import com.github.imthenico.inject.ConstructorModel;
+import com.github.imthenico.inject.InjectionContext;
+import com.github.imthenico.inject.InjectionStructure;
+import me.yushust.message.MessageHandler;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SimpleGameRoomFactory implements GameFactory {
 
-    private final Map<String, MatchFactory> matchCreators;
-    private final ConfigurableModelCache modelCache;
-    private ModelConverter<GameLobby> toLobbyConverter;
+    private final Map<String, GameExpansion> matchConfigurationMap = new HashMap<>();
+    private final MatchFactory matchFactory;
+    private final GameMapHandler mapHandler;
+    private final LocationReference spawnReference;
+    private final InjectionStructure lobbyInjectionStructure = AnnihilationAPI.INJECTION_HANDLER
+            .createStructure(ConstructorModel.fromClass(GameLobby.class));
 
     public SimpleGameRoomFactory(
+            ModelCache modelCache,
+            GameMapHandler mapHandler,
             UtilityPack utilityPack,
-            Scheduler scheduler,
-            GameInstanceManager gameInstanceManager,
-            ConfigurableModelCache modelCache
+            LocationReference spawnReference
     ) {
-        this.matchCreators = new HashMap<>();
-        matchCreators.put("default", MatchFactory.create(utilityPack, scheduler, "default"));
-        this.toLobbyConverter = new ConverterToGameLobby(gameInstanceManager);
-        this.modelCache = modelCache;
+        this.mapHandler = mapHandler;
+        this.matchFactory = new DefaultMatchFactory(mapHandler);
+        MessageHandler messageHandler = utilityPack.getMessageHandler();
+        registerExpansion("default", new DefaultGameExpansion(messageHandler, modelCache));
+        this.spawnReference = spawnReference;
     }
 
     @Override
-    public GameInstance newGame(
+    public GameRoom newGame(
             String id,
-            String matchType,
-            ConfigurableModel lobbyModel
+            String typeName,
+            MapModel<? extends GameLobbyData> lobbyModel
     ) throws IllegalArgumentException {
-        MatchFactory matchFactory;
+        if (typeName == null)
+            typeName = "default";
 
-        if (matchType == null)
-            matchType = "default";
+        GameExpansion expansion = matchConfigurationMap.get(typeName);
 
-        matchFactory = matchCreators.get(matchType);
+        if (expansion == null) {
+            throw new IllegalArgumentException("No expansion found for '" + typeName + "'");
+        }
 
-        Validate.isTrue(matchFactory != null, "Unable to find a match creator");
+        GameLobby gameLobby = mapHandler.createMap(
+                lobbyModel,
+                new InjectionContext(lobbyInjectionStructure),
+                id
+        );
 
-        return new SimpleGameInstance(
-                toLobbyConverter.convert(lobbyModel, Collections.singletonMap("gameId", id)),
+        return new SimpleGameRoom(
+                gameLobby,
+                typeName,
+                spawnReference,
                 id,
-                new SimpleMatchAuthorizer(modelCache),
-                matchFactory
+                expansion.newRules(),
+                expansion.newOptions(),
+                expansion.newAuthorizer(),
+                matchFactory,
+                expansion.getMatchExpansion(),
+                expansion.newMatchMapModelProvider(),
+                expansion.getMapCandidateValidator()
         );
     }
 
     @Override
-    public void registerMatchCreator(
-            String matchTypeName,
-            MatchFactory matchFactory
-    ) throws IllegalArgumentException {
-        Validate.isTrue(!matchCreators.containsKey(matchTypeName), "There's already a registered match creator with that key");
-
-        matchCreators.put(matchTypeName, Validate.notNull(matchFactory));
+    public GameExpansion getConfiguration(String typeName) {
+        return matchConfigurationMap.get(typeName);
     }
 
     @Override
-    public void setToLobbyConverter(ModelConverter<GameLobby> toLobbyConverter) {
-        this.toLobbyConverter = Validate.notNull(toLobbyConverter);
+    public void registerExpansion(String typeName, GameExpansion gameExpansion) {
+        matchConfigurationMap.put(
+                Objects.requireNonNull(typeName),
+                Objects.requireNonNull(gameExpansion)
+        );
     }
 }

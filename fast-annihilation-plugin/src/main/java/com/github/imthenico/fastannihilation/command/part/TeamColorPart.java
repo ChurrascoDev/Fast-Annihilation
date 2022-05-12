@@ -5,7 +5,6 @@ import me.fixeddev.commandflow.CommandContext;
 import me.fixeddev.commandflow.exception.ArgumentParseException;
 import me.fixeddev.commandflow.part.CommandPart;
 import me.fixeddev.commandflow.stack.ArgumentStack;
-import net.kyori.text.TranslatableComponent;
 import org.jetbrains.annotations.Nullable;
 
 public class TeamColorPart implements CommandPart {

@@ -1,14 +1,16 @@
 package com.github.imthenico.annihilation.api;
 
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
-import com.github.imthenico.annihilation.api.property.PropertyMapping;
+import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
-import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
+import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
-import com.github.imthenico.annihilation.api.world.LocationReference;
+import com.github.imthenico.inject.InjectionHandler;
 
 public interface AnnihilationAPI {
+
+    InjectionHandler INJECTION_HANDLER = InjectionHandler.create();
 
     UtilityPack utilities();
 
@@ -16,14 +18,12 @@ public interface AnnihilationAPI {
 
     GameService gameService();
 
-    ConfigurableModelService modelService();
-
-    PropertyMapping getPropertyMapping();
+    ModelService modelService();
 
     Scheduler getScheduler();
 
-    LocationReference getLobbySpawn();
+    PluginHandler getPluginHandler();
 
-    void setLobbySpawn(LocationReference lobbySpawn);
+    ModelTypeRegistry getModelTypeRegistry();
 
 }

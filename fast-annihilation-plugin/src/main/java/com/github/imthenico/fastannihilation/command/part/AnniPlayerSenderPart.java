@@ -1,5 +1,6 @@
 package com.github.imthenico.fastannihilation.command.part;
 
+import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
 import me.fixeddev.commandflow.CommandContext;
 import me.fixeddev.commandflow.bukkit.BukkitCommandManager;
@@ -38,7 +39,10 @@ public class AnniPlayerSenderPart implements CommandPart {
 
         Player player = (Player) sender;
 
-        playerRegistry.getPlayer(player.getUniqueId())
-                .ifPresent(anniPlayer -> context.setValue(this, anniPlayer));
+        AnniPlayer anniPlayer = playerRegistry.getPlayer(player.getUniqueId());
+
+        if (anniPlayer != null) {
+            context.setValue(this, anniPlayer);
+        }
     }
 }

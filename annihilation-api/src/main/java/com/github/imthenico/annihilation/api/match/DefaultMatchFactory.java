@@ -1,79 +1,79 @@
 package com.github.imthenico.annihilation.api.match;
 
 import com.github.imthenico.annihilation.api.AnnihilationAPI;
-import com.github.imthenico.annihilation.api.converter.ModelConverter;
-import com.github.imthenico.annihilation.api.event.MatchCreationEvent;
-import com.github.imthenico.annihilation.api.game.GameInstance;
-import com.github.imthenico.annihilation.api.ingame.MatchMap;
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
+import com.github.imthenico.annihilation.api.event.match.MatchCreationEvent;
+import com.github.imthenico.annihilation.api.game.Game;
+import com.github.imthenico.annihilation.api.game.GameRoom;
+import com.github.imthenico.annihilation.api.match.expansion.MatchExpansion;
+import com.github.imthenico.annihilation.api.model.map.MatchMap;
+import com.github.imthenico.annihilation.api.model.map.data.MatchMapData;
 import com.github.imthenico.annihilation.api.phase.DefaultPhaseManager;
 import com.github.imthenico.annihilation.api.phase.PhaseExpansion;
-import com.github.imthenico.annihilation.api.player.PlayerEventHandler;
-import com.github.imthenico.annihilation.api.player.PlayerSetup;
-import com.github.imthenico.annihilation.api.scheduler.Scheduler;
-import com.github.imthenico.annihilation.api.util.MapPropertiesHelper;
-import com.github.imthenico.simplecommons.util.Validate;
+import com.github.imthenico.annihilation.api.phase.PhaseManager;
+import com.github.imthenico.gmlib.GameMapHandler;
+import com.github.imthenico.gmlib.MapModel;
+import com.github.imthenico.inject.ConstructorModel;
+import com.github.imthenico.inject.InjectionStructure;
+import com.github.imthenico.inject.exception.InvocationException;
 import org.bukkit.Bukkit;
 
-import java.util.function.Function;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DefaultMatchFactory implements MatchFactory {
 
-    private final ModelConverter<MatchMap> toMatchMapConverter;
+    private final GameMapHandler modelDataHandler;
+    private final Map<Class<?>, InjectionStructure> cachedStructures = new HashMap<>();
+    private final ConstructorModel matchMapConstructorModel = ConstructorModel.fromClass(MatchMap.class);
 
-    private final Function<GameInstance, MatchClosingStage> endingProvider;
-    private final MatchEventHandler eventHandler;
-    private final PhaseExpansion phaseExpansion;
-    private final PlayerSetup playerSetup;
-    private final PlayerEventHandler playerEventHandler;
-
-    private final Scheduler scheduler;
-    private final String matchTypeName;
-
-    public DefaultMatchFactory(
-            ModelConverter<MatchMap> toMatchMapConverter,
-            Function<GameInstance, MatchClosingStage> endingProvider,
-            MatchEventHandler eventHandler,
-            PhaseExpansion expansion,
-            PlayerSetup playerSetup,
-            PlayerEventHandler playerEventHandler,
-            Scheduler scheduler,
-            String matchTypeName
-    ) {
-        this.toMatchMapConverter = toMatchMapConverter;
-        this.endingProvider = endingProvider;
-        this.eventHandler = eventHandler;
-        this.phaseExpansion = expansion;
-        this.playerSetup = playerSetup;
-        this.playerEventHandler = playerEventHandler;
-        this.scheduler = scheduler;
-        this.matchTypeName = matchTypeName;
+    public DefaultMatchFactory(GameMapHandler modelDataHandler) {
+        this.modelDataHandler = modelDataHandler;
     }
 
     @Override
-    public Match createMatch(GameInstance game, ConfigurableModel mapModel) {
-        Validate.notNull(endingProvider);
-        Validate.notNull(eventHandler);
-        Validate.notNull(playerSetup);
-        Validate.notNull(playerEventHandler);
+    public Match createMatch(
+            Game game, MatchExpansion gameExpansion, MapModel<? extends MatchMapData> mapModel
+    ) {
+        GameRoom room = game.room();
+        String mapName = room.id() + "_" + mapModel.getName();
 
-        MatchMap matchMap = toMatchMapConverter.convert(mapModel, null);
+        InjectionStructure mapInjectionStructure = cachedStructures
+                .computeIfAbsent(mapModel.getDataType(), dualKey -> AnnihilationAPI.INJECTION_HANDLER.createStructure(matchMapConstructorModel));
 
-        DefaultMatch match = new DefaultMatch(
-                matchTypeName,
-                matchMap,
-                eventHandler,
+        MatchMap matchMap;
+        try {
+            matchMap = modelDataHandler.createMap(
+                    mapModel,
+                    mapInjectionStructure.getValues(mapModel.getData()),
+                    mapName
+            );
+        } catch (InvocationException e) {
+            throw new RuntimeException(e);
+        }
+
+        PhaseExpansion phaseExpansion = gameExpansion.getPhaseExpansion();
+
+        MatchMap finalMatchMap = matchMap;
+        PhaseManager phaseManager = DefaultPhaseManager.createDefaultPhaseManager(
                 game,
-                DefaultPhaseManager.createDefaultPhaseManager(
-                        game,
-                        (phase) -> MapPropertiesHelper.getPhaseDuration(phase, mapModel.getProperties()),
-                        phaseExpansion.getPhaseActionFactory(),
-                        phaseExpansion.supportedPhases()
-                ),
-                endingProvider.apply(game),
-                playerSetup,
-                playerEventHandler,
-                scheduler
+                (phase) -> {
+                    int phaseTime = finalMatchMap.getPhaseTime(phase);
+
+                    if (phaseTime <= 0)
+                        phaseTime = finalMatchMap.getTimePerPhase();
+
+                    return phaseTime;
+                },
+                phaseExpansion.getPhaseActionFactory(),
+                phaseExpansion.supportedPhases()
+        );
+
+        Match match = new DefaultMatch(
+                matchMap,
+                game,
+                phaseManager,
+                gameExpansion.getEndingProvider().apply(game),
+                gameExpansion.getPlayerSetup()
         );
 
         Bukkit.getPluginManager().callEvent(new MatchCreationEvent(match));
@@ -81,8 +81,5 @@ public class DefaultMatchFactory implements MatchFactory {
         return match;
     }
 
-    @Override
-    public String getProductTypeName() {
-        return matchTypeName;
-    }
+
 }

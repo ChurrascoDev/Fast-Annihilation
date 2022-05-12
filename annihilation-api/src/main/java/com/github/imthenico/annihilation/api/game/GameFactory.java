@@ -1,21 +1,18 @@
 package com.github.imthenico.annihilation.api.game;
 
-import com.github.imthenico.annihilation.api.converter.ModelConverter;
-import com.github.imthenico.annihilation.api.match.MatchFactory;
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
+import com.github.imthenico.annihilation.api.model.lobby.GameLobbyData;
+import com.github.imthenico.gmlib.MapModel;
 
 public interface GameFactory {
 
-    GameInstance newGame(
+    GameRoom newGame(
             String id,
-            String matchType,
-            ConfigurableModel lobbyModel
+            String typeName,
+            MapModel<? extends GameLobbyData> lobbyModel
     ) throws IllegalArgumentException;
 
-    void registerMatchCreator(
-            String matchTypeName,
-            MatchFactory matchFactory
-    ) throws IllegalArgumentException;
+    GameExpansion getConfiguration(String typeName);
 
-    void setToLobbyConverter(ModelConverter<GameLobby> converter);
+    void registerExpansion(String typeName, GameExpansion gameExpansion);
+
 }

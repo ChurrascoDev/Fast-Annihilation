@@ -1,5 +1,6 @@
 package com.github.imthenico.annihilation.api.world;
 
+import com.github.imthenico.annihilation.api.util.Formatting;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -23,5 +24,9 @@ public interface LocationReference extends Supplier<Location> {
             location.getYaw(),
             location.getPitch()
         );
+    }
+
+    default String toString(String format) {
+        return Formatting.formatLocation(get(), 3, format);
     }
 }

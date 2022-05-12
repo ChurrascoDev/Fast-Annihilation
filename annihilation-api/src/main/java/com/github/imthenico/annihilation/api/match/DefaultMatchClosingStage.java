@@ -1,9 +1,9 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.game.GameInstance;
+import com.github.imthenico.annihilation.api.game.GameRoom;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 
 public class DefaultMatchClosingStage extends AbstractMatchClosingStage {
 
@@ -28,7 +28,7 @@ public class DefaultMatchClosingStage extends AbstractMatchClosingStage {
     public void start() {
         Match match = match();
 
-        Validate.notNull(match, "match");
+        Objects.requireNonNull(match, "match");
 
         if (!match.allPhasesFinished() || running) {
             throw new UnsupportedOperationException();
@@ -49,7 +49,7 @@ public class DefaultMatchClosingStage extends AbstractMatchClosingStage {
         if (match == null)
             return;
 
-        GameInstance game = match.getGame();
+        GameRoom game = match.getGame().room();
 
         for (AnniPlayer player : game.getPlayers((p) -> true)) {
             player.getPlayer().sendMessage(String.format("The match will end in: %s", getRemainingTime()));

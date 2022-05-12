@@ -1,16 +1,18 @@
 package com.github.imthenico.annihilation.api.task;
 
-import com.github.imthenico.annihilation.api.game.GameInstance;
-import com.github.imthenico.annihilation.api.game.GameInstanceManager;
+import com.github.imthenico.annihilation.api.game.Game;
+import com.github.imthenico.annihilation.api.game.GameRoom;
+import com.github.imthenico.annihilation.api.game.GameManager;
 import com.github.imthenico.annihilation.api.game.PreMatchStage;
 import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.match.MatchClosingStage;
 import com.github.imthenico.annihilation.api.match.authorization.AuthorizationResult;
 import com.github.imthenico.annihilation.api.message.MessagePath;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
+import com.github.imthenico.annihilation.api.util.Formatting;
 import com.github.imthenico.annihilation.api.util.GameValidation;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
-import com.github.imthenico.simplecommons.bukkit.util.TextColorApplier;
+import com.github.imthenico.annihilation.api.util.TaskStateProvider;
 import me.yushust.message.MessageHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,11 +22,11 @@ import java.util.logging.Level;
 
 public class GameTimerUpdater extends BukkitRunnable {
 
-    private final GameInstanceManager gameInstances;
+    private final GameManager gameInstances;
     private final MessageHandler messageHandler;
 
     public GameTimerUpdater(
-            GameInstanceManager gameInstances,
+            GameManager gameInstances,
             MessageHandler messageHandler
     ) {
         this.gameInstances = gameInstances;
@@ -36,15 +38,19 @@ public class GameTimerUpdater extends BukkitRunnable {
         if (!TaskStateProvider.isRunning(this))
             return;
 
-        for (GameInstance instance : gameInstances) {
-            Match match = instance.getMatch();
+        for (GameRoom room : gameInstances) {
+            if (!room.isEnabled()) {
+                continue;
+            }
+
+            Match match = room.game().runningMatch();
 
             if (match != null) {
                 handleMatchTimer(match);
                 continue;
             }
 
-            handleTimer(instance);
+            handleTimer(room);
         }
     }
 
@@ -63,7 +69,7 @@ public class GameTimerUpdater extends BukkitRunnable {
             if (ending.getRemainingTime() > 0) {
                 ending.run();
             } else {
-                match.getGame().discardMatch();
+                match.getGame().room().restoreLogic();
             }
         } else {
             if (match.allPhasesFinished()) {
@@ -75,15 +81,17 @@ public class GameTimerUpdater extends BukkitRunnable {
         }
     }
 
-    private void handleTimer(GameInstance gameInstance) {
-        PreMatchStage preMatchStage = gameInstance.getPreparationStage();
+    private void handleTimer(GameRoom room) {
+        Game game = room.game();
+
+        PreMatchStage preMatchStage = game.getPreparationStage();
 
         SimpleTimer timer = preMatchStage.getCountdownToStart();
 
-        List<AnniPlayer> players = gameInstance.getPlayers((a) -> true);
+        List<AnniPlayer> players = room.getPlayers((p) -> true);
 
         if (timer.isOver()) {
-            AuthorizationResult authorizationResult = gameInstance.startMatch();
+            AuthorizationResult authorizationResult = game.startMatch();
 
             if (!authorizationResult.isAuthorized()) {
                 MessagePath path = authorizationResult.getReasonMessage();
@@ -97,7 +105,7 @@ public class GameTimerUpdater extends BukkitRunnable {
                 } else {
                     for (AnniPlayer player : players) {
                         player.getPlayer().sendMessage(
-                                TextColorApplier.color(path.getDefaultMessage())
+                                Formatting.colorize(path.getDefaultMessage())
                         );
                     }
                 }
@@ -109,13 +117,12 @@ public class GameTimerUpdater extends BukkitRunnable {
                 }
             }
 
-            cancel();
             return;
         }
 
         boolean startedToCountdown = timer.getElapsedTime() > 0;
 
-        if (GameValidation.balancedTeams(gameInstance)) {
+        if (GameValidation.balancedTeams(game)) {
             if (!startedToCountdown) {
                 messageHandler
                         .send(players, "starting-game");

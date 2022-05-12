@@ -19,7 +19,7 @@ public class PlayerLinguist implements Linguist<Player> {
 
     @Override
     public @Nullable String getLanguage(Player player) {
-        AnniPlayer anniPlayer = playerRegistry.getPlayer(player.getUniqueId()).orElse(null);
+        AnniPlayer anniPlayer = playerRegistry.getPlayer(player.getUniqueId());
 
         if (anniPlayer != null) {
             return anniPlayer.getLangOrDefault();

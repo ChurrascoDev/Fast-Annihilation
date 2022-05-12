@@ -1,13 +1,33 @@
 package com.github.imthenico.annihilation.api.util;
 
-import com.github.imthenico.simplecommons.minecraft.LocationModel;
+import com.github.imthenico.annihilation.api.model.LocationModel;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 import java.text.NumberFormat;
+import java.util.List;
 
 public class Formatting {
 
-    private final static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+
+    public static String colorize(String str) {
+        return ChatColor.translateAlternateColorCodes('&', str);
+    }
+
+    public static String[] colorize(String... str) {
+        for (int i = 0; i < str.length; i++) {
+            str[i] = colorize(str[i]);
+        }
+
+        return str;
+    }
+
+    public static List<String> colorize(List<String> list) {
+        list.replaceAll(Formatting::colorize);
+
+        return list;
+    }
 
     public synchronized static String formatAxis(
             double x,

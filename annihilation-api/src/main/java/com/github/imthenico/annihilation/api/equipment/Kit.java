@@ -1,7 +1,8 @@
 package com.github.imthenico.annihilation.api.equipment;
 
-import com.github.imthenico.simplecommons.util.Validate;
 import org.bukkit.potion.PotionEffect;
+
+import java.util.Objects;
 
 public class Kit {
 
@@ -12,8 +13,8 @@ public class Kit {
             Equipment equipment,
             PotionEffect[] effects
     ) {
-        this.equipment = Validate.notNull(equipment);
-        this.effects = Validate.defIfNull(effects, new PotionEffect[0]);
+        this.equipment = Objects.requireNonNull(equipment);
+        this.effects = effects == null ? new PotionEffect[0] : effects;
     }
 
     public PotionEffect[] getEffects() {

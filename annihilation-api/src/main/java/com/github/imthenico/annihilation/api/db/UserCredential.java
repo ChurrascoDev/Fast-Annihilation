@@ -1,0 +1,74 @@
+package com.github.imthenico.annihilation.api.db;
+
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public class UserCredential implements ConfigurationSerializable {
+
+    private final String userName;
+    private final String password;
+    private final String ip;
+    private final String port;
+    private final String database;
+
+    public UserCredential(String userName, String password, String ip, String port, String database) {
+        this.userName = Objects.requireNonNull(userName);
+        this.password = Objects.requireNonNull(password);
+        this.ip = Objects.requireNonNull(ip);
+        this.port = port != null && !port.equals("") ? port : "3306";
+        this.database = Objects.requireNonNull(database);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public String apply(String url) {
+        return url.replace("<userName>", userName)
+                .replace("<password>", password)
+                .replace("<ip>", ip)
+                .replace("<port>", port)
+                .replace("<database>", database);
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userName", userName);
+        map.put("password", password);
+        map.put("ip", ip);
+        map.put("port", port);
+        map.put("database", database);
+
+        return map;
+    }
+
+    public static UserCredential deserialize(Map<String, Object> objectMap) {
+        return new UserCredential(
+                (String) objectMap.get("userName"),
+                (String) objectMap.get("password"),
+                (String) objectMap.get("ip"),
+                (String) objectMap.get("port"),
+                (String) objectMap.get("database")
+        );
+    }
+}

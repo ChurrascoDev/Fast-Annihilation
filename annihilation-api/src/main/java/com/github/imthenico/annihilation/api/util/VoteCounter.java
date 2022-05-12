@@ -1,14 +1,8 @@
 package com.github.imthenico.annihilation.api.util;
 
-import com.github.imthenico.simplecommons.util.Pair;
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-public class VoteCounter<K, V> {
+public abstract class VoteCounter<K, V> {
 
     private final Map<V, List<K>> votes;
 
@@ -17,8 +11,8 @@ public class VoteCounter<K, V> {
     }
 
     public void vote(K voter, V candidate) {
-        Validate.notNull(voter, "voter");
-        Validate.notNull(candidate, "candidate");
+        Objects.requireNonNull(voter, "voter");
+        Objects.requireNonNull(candidate, "candidate");
 
         for (List<K> value : votes.values()) {
             value.remove(voter);
@@ -30,7 +24,7 @@ public class VoteCounter<K, V> {
     }
 
     public V getVote(K voter) {
-        Validate.notNull(voter, "voter");
+        Objects.requireNonNull(voter);
 
         for (Map.Entry<V, List<K>> entry : votes.entrySet()) {
             List<K> votes = entry.getValue();
@@ -55,4 +49,10 @@ public class VoteCounter<K, V> {
 
         return mostVoted.getLeft();
     }
+
+    public boolean isCandidate(V possibleCandidate) {
+        return getCandidates().contains(possibleCandidate);
+    }
+
+    public abstract List<V> getCandidates();
 }

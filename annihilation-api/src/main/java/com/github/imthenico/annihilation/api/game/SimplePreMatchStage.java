@@ -1,30 +1,42 @@
 package com.github.imthenico.annihilation.api.game;
 
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
+import com.github.imthenico.annihilation.api.event.game.PlayerSelectTeamEvent;
+import com.github.imthenico.annihilation.api.event.game.PlayerUnselectTeamEvent;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
+import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
 import com.github.imthenico.annihilation.api.util.VoteCounter;
-import com.github.imthenico.simplecommons.util.Validate;
+import com.github.imthenico.annihilation.api.validator.MapCandidateValidator;
+import org.bukkit.Bukkit;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public class SimplePreMatchStage implements PreMatchStage {
 
-    private final VoteCounter<UUID, ConfigurableModel> votes;
+    private final VoteCounter<UUID, String> votes;
     private final Map<UUID, TeamColor> teamSelection;
     private final SimpleTimer timer;
+    private final Game game;
 
     public SimplePreMatchStage(
-            int timeToStart
+            int timeToStart,
+            Game game,
+            MatchMapModelProvider matchMapModelProvider,
+            MapCandidateValidator candidateValidator
     ) {
-        this.votes = new VoteCounter<>();
+        this.game = game;
+        this.votes = new MapVoteCounter<>(matchMapModelProvider, candidateValidator, game);
         this.teamSelection = new HashMap<>();
         this.timer = new SimpleTimer(timeToStart);
     }
 
     @Override
-    public VoteCounter<UUID, ConfigurableModel> getVotes() {
+    public VoteCounter<UUID, String> getVotes() {
         return votes;
     }
 
@@ -35,11 +47,26 @@ public class SimplePreMatchStage implements PreMatchStage {
 
     @Override
     public TeamColor joinTeam(AnniPlayer anniPlayer, TeamColor color) {
-        return this.teamSelection.put(anniPlayer.getId(), Validate.notNull(color));
+        TeamColor prev = this.teamSelection.get(anniPlayer.getId());
+
+        PlayerSelectTeamEvent event = new PlayerSelectTeamEvent(game, anniPlayer, color, prev);
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled())
+            return null;
+
+        return this.teamSelection.put(anniPlayer.getId(), color);
     }
 
     @Override
     public TeamColor leaveTeam(AnniPlayer anniPlayer) {
+        TeamColor prev = this.teamSelection.get(anniPlayer.getId());
+
+        PlayerUnselectTeamEvent event = new PlayerUnselectTeamEvent(game, anniPlayer, prev);
+
+        Bukkit.getPluginManager().callEvent(event);
+
         return this.teamSelection.remove(anniPlayer.getId());
     }
 

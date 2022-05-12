@@ -1,0 +1,7 @@
+name: FastAnnihilation
+version: '${project.version}'
+main: com.github.imthenico.fastannihilation.tests.ForTestsAnniPlugin
+authors: [ ImTheNico ]
+depend:
+  - SlimeWorldManager
+  - Citizens

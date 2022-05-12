@@ -1,6 +1,5 @@
 package com.github.imthenico.annihilation.api.game;
 
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
@@ -11,7 +10,7 @@ import java.util.UUID;
 
 public interface PreMatchStage {
 
-    VoteCounter<UUID, ConfigurableModel> getVotes();
+    VoteCounter<UUID, String> getVotes();
 
     Map<UUID, TeamColor> getTeamSelection();
 

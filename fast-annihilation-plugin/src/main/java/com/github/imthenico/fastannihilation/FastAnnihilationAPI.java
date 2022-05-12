@@ -1,38 +1,35 @@
 package com.github.imthenico.fastannihilation;
 
 import com.github.imthenico.annihilation.api.AnnihilationAPI;
+import com.github.imthenico.annihilation.api.PluginHandler;
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
-import com.github.imthenico.annihilation.api.property.PropertyMapping;
+import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
-import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
+import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
-import com.github.imthenico.annihilation.api.world.LocationReference;
-import com.github.imthenico.simplecommons.bukkit.service.PluginServiceRegistry;
-import com.github.imthenico.simplecommons.util.Validate;
-import org.bukkit.Bukkit;
 
 public class FastAnnihilationAPI implements AnnihilationAPI {
 
     private final UtilityPack utilityPack;
     private final PlayerRegistry playerRegistry;
-    private final PluginServiceRegistry pluginServiceRegistry;
+    private final FastAnnihilationPlugin fastAnnihilationPlugin;
     private final Scheduler scheduler;
-    private final PropertyMapping propertyMapping;
-    private LocationReference lobbySpawn;
+    private final PluginHandler pluginHandler;
+    private final ModelTypeRegistry modelTypeRegistry = new ModelTypeRegistry();
 
     public FastAnnihilationAPI(
             UtilityPack utilityPack,
             PlayerRegistry playerRegistry,
-            PluginServiceRegistry pluginServiceRegistry,
-            PropertyMapping propertyMapping,
-            Scheduler scheduler
+            FastAnnihilationPlugin fastAnnihilationPlugin,
+            Scheduler scheduler,
+            PluginHandler pluginHandler
     ) {
         this.utilityPack = utilityPack;
         this.playerRegistry = playerRegistry;
-        this.pluginServiceRegistry = pluginServiceRegistry;
-        this.propertyMapping = propertyMapping;
+        this.fastAnnihilationPlugin = fastAnnihilationPlugin;
         this.scheduler = scheduler;
+        this.pluginHandler = pluginHandler;
     }
 
     @Override
@@ -47,17 +44,12 @@ public class FastAnnihilationAPI implements AnnihilationAPI {
 
     @Override
     public GameService gameService() {
-        return pluginServiceRegistry.getService(GameService.class);
+        return fastAnnihilationPlugin.getGameService();
     }
 
     @Override
-    public ConfigurableModelService modelService() {
-        return pluginServiceRegistry.getService(ConfigurableModelService.class);
-    }
-
-    @Override
-    public PropertyMapping getPropertyMapping() {
-        return propertyMapping;
+    public ModelService modelService() {
+        return fastAnnihilationPlugin.getModelService();
     }
 
     @Override
@@ -66,12 +58,12 @@ public class FastAnnihilationAPI implements AnnihilationAPI {
     }
 
     @Override
-    public LocationReference getLobbySpawn() {
-        return Validate.defIfNull(lobbySpawn, () -> Bukkit.getWorlds().get(0).getSpawnLocation());
+    public PluginHandler getPluginHandler() {
+        return pluginHandler;
     }
 
     @Override
-    public void setLobbySpawn(LocationReference lobbySpawn) {
-        this.lobbySpawn = lobbySpawn;
+    public ModelTypeRegistry getModelTypeRegistry() {
+        return modelTypeRegistry;
     }
 }

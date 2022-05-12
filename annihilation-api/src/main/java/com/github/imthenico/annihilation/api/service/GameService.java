@@ -1,44 +1,16 @@
 package com.github.imthenico.annihilation.api.service;
 
-import com.github.imthenico.annihilation.api.AnnihilationAPI;
-import com.github.imthenico.annihilation.api.cache.ConfigurableModelCache;
 import com.github.imthenico.annihilation.api.game.GameFactory;
-import com.github.imthenico.annihilation.api.game.GameInstanceManager;
-import com.github.imthenico.annihilation.api.game.SimpleGameInstanceManager;
-import com.github.imthenico.annihilation.api.game.SimpleGameRoomFactory;
-import com.github.imthenico.annihilation.api.scheduler.Scheduler;
-import com.github.imthenico.annihilation.api.util.UtilityPack;
-import com.github.imthenico.simplecommons.bukkit.service.AbstractPluginService;
+import com.github.imthenico.annihilation.api.game.GameManager;
+import com.github.imthenico.annihilation.api.world.LocationReference;
 
-public class GameService extends AbstractPluginService {
+public interface GameService extends Service {
 
-    private final GameInstanceManager gameInstanceManager;
-    private final GameFactory gameFactory;
+    GameManager gameManager();
 
-    public GameService(
-            UtilityPack utilityPack,
-            Scheduler scheduler,
-            ConfigurableModelCache modelCache
-    ) {
-        this.gameInstanceManager = new SimpleGameInstanceManager();
-        this.gameFactory = new SimpleGameRoomFactory(utilityPack, scheduler, gameInstanceManager, modelCache);
-    }
+    GameFactory factory();
 
-    @Override
-    protected void onEnd() {
+    LocationReference getLobbySpawnReference();
 
-    }
-
-    @Override
-    protected void onStart() {
-
-    }
-
-    public GameInstanceManager gameManager() {
-        return gameInstanceManager;
-    }
-
-    public GameFactory factory() {
-        return gameFactory;
-    }
+    void setLobbySpawnReference(LocationReference spawnReference);
 }

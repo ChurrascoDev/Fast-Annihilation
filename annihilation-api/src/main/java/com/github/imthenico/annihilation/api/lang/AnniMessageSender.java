@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.lang;
 
-import com.github.imthenico.annihilation.api.message.ReplaceableMessage;
+import com.github.imthenico.annihilation.api.message.AbstractMessage;
 import me.yushust.message.send.MessageSender;
 
 public interface AnniMessageSender<T> extends MessageSender<T> {
@@ -8,6 +8,6 @@ public interface AnniMessageSender<T> extends MessageSender<T> {
     void sendAbstractMessage(
             T receiver,
             String mode,
-            ReplaceableMessage<?> message
+            AbstractMessage<?> message
     );
 }

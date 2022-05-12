@@ -1,7 +1,6 @@
 package com.github.imthenico.annihilation.api.match.authorization;
 
 import com.github.imthenico.annihilation.api.message.MessagePath;
-import com.github.imthenico.simplecommons.util.Validate;
 
 public class AuthorizationResult {
 

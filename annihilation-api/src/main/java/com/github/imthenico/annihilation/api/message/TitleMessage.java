@@ -1,9 +1,9 @@
 package com.github.imthenico.annihilation.api.message;
 
-import com.github.imthenico.simplecommons.minecraft.Title;
+import com.github.imthenico.annihilation.api.util.Title;
 import me.yushust.message.util.ReplacePack;
 
-public class TitleMessage implements ReplaceableMessage<Title> {
+public class TitleMessage implements AbstractMessage<Title> {
 
     private Title title;
 

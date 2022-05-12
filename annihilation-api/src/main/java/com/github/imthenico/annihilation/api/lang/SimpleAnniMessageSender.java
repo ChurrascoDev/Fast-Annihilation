@@ -1,8 +1,8 @@
 package com.github.imthenico.annihilation.api.lang;
 
-import com.github.imthenico.annihilation.api.message.ReplaceableMessage;
-import com.github.imthenico.simplecommons.bukkit.util.TextColorApplier;
-import com.github.imthenico.simplecommons.minecraft.Title;
+import com.github.imthenico.annihilation.api.message.AbstractMessage;
+import com.github.imthenico.annihilation.api.util.Formatting;
+import com.github.imthenico.annihilation.api.util.Title;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
 
@@ -11,7 +11,7 @@ public class SimpleAnniMessageSender implements AnniMessageSender<Player> {
     public void sendAbstractMessage(
             Player receiver,
             String mode,
-            ReplaceableMessage<?> message
+            AbstractMessage<?> message
     ) {
         Object handle = message.getMessage();
 
@@ -29,7 +29,7 @@ public class SimpleAnniMessageSender implements AnniMessageSender<Player> {
         if ("action-bar".equalsIgnoreCase(mode)) {
             // send message as action bar
         } else {
-            player.sendMessage(TextColorApplier.color(s1));
+            player.sendMessage(Formatting.colorize(s1));
         }
     }
 }

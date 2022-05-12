@@ -2,7 +2,7 @@ package com.github.imthenico.annihilation.api.message;
 
 import me.yushust.message.util.ReplacePack;
 
-public class SimpleMessage implements ReplaceableMessage<String> {
+public class SimpleMessage implements AbstractMessage<String> {
 
     private String string;
 

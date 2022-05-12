@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.lang;
 
-import com.github.imthenico.annihilation.api.message.ReplaceableMessage;
+import com.github.imthenico.annihilation.api.message.AbstractMessage;
 import me.yushust.message.impl.AbstractDelegatingMessageProvider;
 import me.yushust.message.send.MessageSender;
 import me.yushust.message.send.impl.MessageHandlerImpl;
@@ -42,7 +42,7 @@ public class CustomMessageHandler extends AbstractDelegatingMessageProvider {
                 if (Objects.equals(path, found))
                     return;
 
-                ReplaceableMessage<?> message = ReplaceableMessage.of(found);
+                AbstractMessage<?> message = AbstractMessage.of(found);
 
                 message.applyReplacements(replacePack);
 

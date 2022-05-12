@@ -1,16 +1,22 @@
 package com.github.imthenico.annihilation.api.lang;
 
-import com.github.imthenico.simplecommons.util.Validate;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public interface LangHolder {
 
-    String DEFAULT_LANG = "english";
+    String DEFAULT_LANG = "en";
 
     @Nullable String getLang();
 
     default String getLangOrDefault(String def) {
-        return Validate.defIfNull(getLang(), def);
+        String lang = getLang();
+
+        if (lang != null)
+            return lang;
+
+        return def;
     }
 
     default String getLangOrDefault() {

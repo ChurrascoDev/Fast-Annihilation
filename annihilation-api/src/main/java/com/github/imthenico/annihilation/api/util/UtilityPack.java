@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.util;
 
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 import me.yushust.message.MessageHandler;
 
 public class UtilityPack {
@@ -8,7 +8,7 @@ public class UtilityPack {
     private final MessageHandler messageHandler;
 
     public UtilityPack(MessageHandler messageHandler) {
-        this.messageHandler = Validate.notNull(messageHandler);
+        this.messageHandler = Objects.requireNonNull(messageHandler);
     }
 
     public MessageHandler getMessageHandler() {

@@ -1,9 +1,9 @@
 package com.github.imthenico.fastannihilation.delegate;
 
-import com.github.imthenico.annihilation.api.storage.AnniStorage;
 import com.github.imthenico.annihilation.api.storage.StorageSource;
-import com.github.imthenico.simplecommons.data.node.TreeNode;
-import com.github.imthenico.simplecommons.data.repository.AbstractRepository;
+import com.github.imthenico.fastannihilation.storage.AnniStorage;
+import com.github.imthenico.repository.AbstractRepository;
+import com.google.gson.JsonObject;
 
 import java.util.function.Supplier;
 
@@ -14,7 +14,7 @@ public interface DelegatingFactory {
     ) {
         return new AnniStorage() {
             @Override
-            public AbstractRepository<TreeNode> getModelDataRepository() {
+            public AbstractRepository<JsonObject> getModelDataRepository() {
                 return delegate.get().getModelDataRepository();
             }
 

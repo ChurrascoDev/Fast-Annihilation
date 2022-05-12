@@ -1,15 +1,15 @@
 package com.github.imthenico.annihilation.api.editor;
 
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
+import com.github.imthenico.annihilation.api.model.map.data.EditableMapData;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
-import com.github.imthenico.annihilation.api.property.PropertiesContainer;
+import com.github.imthenico.gmlib.MapModel;
 
 import java.util.Map;
 import java.util.UUID;
 
-public interface SetupContext {
+public interface SetupContext<T extends EditableMapData> {
 
-    ConfigurableModel getEditingTarget();
+    MapModel<T> getEditingTarget();
 
     Map<UUID, AnniPlayer> getEditors();
 
@@ -17,6 +17,6 @@ public interface SetupContext {
 
     void removeEditor(AnniPlayer anniPlayer) throws IllegalArgumentException;
 
-    PropertiesContainer getChangesProduced();
+    T getChangesProduced();
 
 }

@@ -4,7 +4,7 @@ import me.yushust.message.util.ReplacePack;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class ComponentMessage implements ReplaceableMessage<BaseComponent> {
+public class ComponentMessage implements AbstractMessage<BaseComponent> {
 
     private BaseComponent baseComponent;
 

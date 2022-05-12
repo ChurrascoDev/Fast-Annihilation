@@ -1,7 +1,7 @@
 package com.github.imthenico.annihilation.api.scheduler;
 
-import com.github.imthenico.annihilation.api.concurrent.CompletableFutures;
-import com.github.imthenico.simplecommons.util.Validate;
+import com.github.imthenico.annihilation.api.util.CompletableFutures;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -17,7 +17,7 @@ public class SimpleBukkitScheduler implements Scheduler {
     private final BukkitScheduler bukkitScheduler;
 
     public SimpleBukkitScheduler(Plugin plugin) {
-        this.plugin = Validate.notNull(plugin);
+        this.plugin = Objects.requireNonNull(plugin);
         this.bukkitScheduler = Bukkit.getScheduler();
     }
 

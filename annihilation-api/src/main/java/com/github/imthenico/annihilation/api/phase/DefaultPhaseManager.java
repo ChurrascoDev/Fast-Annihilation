@@ -1,23 +1,19 @@
 package com.github.imthenico.annihilation.api.phase;
 
-import com.github.imthenico.annihilation.api.event.PhaseEndEvent;
-import com.github.imthenico.annihilation.api.event.PhaseStartEvent;
-import com.github.imthenico.annihilation.api.game.GameInstance;
+import com.github.imthenico.annihilation.api.event.match.PhaseEndEvent;
+import com.github.imthenico.annihilation.api.event.match.PhaseStartEvent;
+import com.github.imthenico.annihilation.api.game.Game;
+import com.github.imthenico.annihilation.api.util.Pair;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
-import com.github.imthenico.simplecommons.util.Pair;
-import com.github.imthenico.simplecommons.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class DefaultPhaseManager implements PhaseManager {
 
-    private final GameInstance game;
+    private final Game game;
     private final Map<Integer, Pair<SimpleRunningPhase, PhaseAction>> phases;
     private final PluginManager pluginManager;
 
@@ -25,7 +21,7 @@ public class DefaultPhaseManager implements PhaseManager {
     private SimpleTimer timer;
 
     private DefaultPhaseManager(
-            GameInstance game,
+            Game game,
             Map<Integer, Pair<SimpleRunningPhase, PhaseAction>> phases
     ) {
         this.phases = phases;
@@ -55,7 +51,8 @@ public class DefaultPhaseManager implements PhaseManager {
 
     @Override
     public RunnablePhase next() throws UnsupportedOperationException {
-        Validate.isTrue(hasNext(), "The last phase is running.");
+        if (!hasNext())
+            throw new UnsupportedOperationException("The last phase is running.");
 
         initPhase(currentPhase++);
         return phases.get(currentPhase).getLeft();
@@ -67,8 +64,9 @@ public class DefaultPhaseManager implements PhaseManager {
     }
 
     @Override
-    public void start() throws IllegalArgumentException {
-        Validate.isTrue(currentPhase <= 0, "Manager is already started.");
+    public void start() throws UnsupportedOperationException {
+        if (currentPhase >= 0)
+            throw new UnsupportedOperationException("Manager is already started");
 
         next();
     }
@@ -87,7 +85,7 @@ public class DefaultPhaseManager implements PhaseManager {
         phase.running = true;
         phaseEntry.getRight().accept(phase, game);
 
-        pluginManager.callEvent(new PhaseStartEvent(phase, game.getMatch()));
+        pluginManager.callEvent(new PhaseStartEvent(game.runningMatch(), phase));
     }
 
     private void endPhase(SimpleRunningPhase phase) {
@@ -95,16 +93,18 @@ public class DefaultPhaseManager implements PhaseManager {
 
         phase.finished = true;
         phase.running = false;
-        pluginManager.callEvent(new PhaseEndEvent(phase, game.getMatch()));
+        pluginManager.callEvent(new PhaseEndEvent(game.runningMatch(), phase));
     }
 
     public static DefaultPhaseManager createDefaultPhaseManager(
-            GameInstance game,
+            Game game,
             Function<Integer, Integer> phaseDurationProvider,
             PhaseActionFactory phaseActionFactory,
             int... phases
     ) {
-        Validate.isTrue(phases.length > 0, "phases <= 0");
+        if (phases.length <= 0) {
+            throw new IllegalArgumentException("phases <= 0");
+        }
 
         DefaultPhaseManager phaseManager = new DefaultPhaseManager(
                 game,
@@ -112,8 +112,14 @@ public class DefaultPhaseManager implements PhaseManager {
         );
 
         for (int phaseNumber : phases) {
-            Phase phase = new Phase(phaseDurationProvider.apply(phaseNumber), phaseNumber);
-            phaseManager.phases.put(phaseNumber, new Pair<>(new SimpleRunningPhase(phase), phaseActionFactory.newActionFor(phaseNumber)));
+            Integer duration = phaseDurationProvider.apply(phaseNumber);
+            Objects.requireNonNull(duration, "duration of " + phaseNumber + " is null");
+
+            PhaseAction phaseAction = phaseActionFactory.newActionFor(phaseNumber);
+            Objects.requireNonNull(phaseAction, "phase action of " + phaseNumber + " is null");
+
+            Phase phase = new Phase(duration, phaseNumber);
+            phaseManager.phases.put(phaseNumber, new Pair<>(new SimpleRunningPhase(phase), phaseAction));
         }
 
         return phaseManager;

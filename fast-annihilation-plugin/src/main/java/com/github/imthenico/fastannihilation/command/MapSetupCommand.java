@@ -1,67 +1,34 @@
 package com.github.imthenico.fastannihilation.command;
 
-import com.github.imthenico.annihilation.api.cache.ConfigurableModelCache;
 import com.github.imthenico.annihilation.api.editor.SetupContext;
-import com.github.imthenico.annihilation.api.editor.SetupManager;
-import com.github.imthenico.annihilation.api.map.model.NexusModel;
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
-import com.github.imthenico.annihilation.api.property.PropertiesContainer;
-import com.github.imthenico.annihilation.api.property.PropertyKeys;
-import com.github.imthenico.annihilation.api.player.AnniPlayer;
+import com.github.imthenico.annihilation.api.editor.ModelSetupManager;
+import com.github.imthenico.annihilation.api.model.LocationModel;
+import com.github.imthenico.annihilation.api.model.NexusModel;
+import com.github.imthenico.annihilation.api.model.TeamDataModel;
+import com.github.imthenico.annihilation.api.model.map.data.MatchMapData;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.annihilation.api.util.Formatting;
-import com.github.imthenico.simplecommons.bukkit.util.Conversions;
-import com.github.imthenico.simplecommons.minecraft.LocationModel;
+import com.github.imthenico.gmlib.ModelData;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.bukkit.annotation.Sender;
 import me.fixeddev.commandflow.exception.CommandException;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.github.imthenico.annihilation.api.util.MapPropertiesHelper.*;
+import java.util.Set;
 
 @Command(names = "mapeditor")
 public class MapSetupCommand implements CommandClass {
 
-    private final SetupManager setupManager;
-    private final ConfigurableModelCache configurableModelCache;
+    private final ModelSetupManager modelSetupManager;
 
     public MapSetupCommand(
-            SetupManager setupManager,
-            ConfigurableModelCache configurableModelCache
+            ModelSetupManager modelSetupManager
     ) {
-        this.setupManager = setupManager;
-        this.configurableModelCache = configurableModelCache;
-    }
-
-    @Command(names = "editmap")
-    public boolean setupMap(@Sender AnniPlayer anniPlayer, String mapName) {
-        ConfigurableModel mapModel = configurableModelCache.getModel(mapName);
-        Player player = anniPlayer.getPlayer();
-
-        if (mapModel == null) {
-            player.sendMessage("Invalid map name");
-            return true;
-        }
-
-        try {
-            setupManager.setupMap(anniPlayer, mapModel);
-            World world = mapModel.getMainWorld().getWorld();
-
-            player.teleport(world.getSpawnLocation());
-
-            player.sendMessage("You're now editing " + mapModel.getId());
-        } catch (UnsupportedOperationException e) {
-            player.sendMessage("You're already editing a map");
-        }
-
-        return true;
+        this.modelSetupManager = modelSetupManager;
     }
 
     @Command(names = "setspawn")
@@ -69,20 +36,18 @@ public class MapSetupCommand implements CommandClass {
             @Sender Player player,
             TeamColor color
     ) {
-        SetupContext context = getSetupContext(player);
+        SetupContext<MatchMapData> context = getSetupContext(player);
 
         if (context == null)
             return true;
 
-        PropertiesContainer propertiesContainer = context.getChangesProduced();
+        MatchMapData changesProduced = context.getChangesProduced();
 
-        List<LocationModel> spawns = propertiesContainer.getProperty(PropertyKeys.teamSpawns(color))
-                .orDefault(ArrayList::new);
+        TeamDataModel dataModel = changesProduced.getTeamData(color);
 
-        LocationModel locationModel = Conversions.fromBukkitLocation(player
-                .getLocation().getBlock().getLocation().add(0.5, 0.5, 0.5));
+        LocationModel locationModel = normalizePosition(player);
 
-        spawns.add(locationModel);
+        dataModel.addSpawn(locationModel);
 
         player.sendMessage(
                 color.getColorCode() +
@@ -93,19 +58,46 @@ public class MapSetupCommand implements CommandClass {
         return true;
     }
 
+    @Command(names = "setspectatorpos")
+    public boolean setSpectatorPos(
+            @Sender Player player,
+            TeamColor color
+    ) {
+        SetupContext<MatchMapData> context = getSetupContext(player);
+
+        if (context == null)
+            return true;
+
+        MatchMapData changesProduced = context.getChangesProduced();
+
+        TeamDataModel dataModel = changesProduced.getTeamData(color);
+
+        LocationModel locationModel = normalizePosition(player);
+
+        dataModel.addSpectatorPos(locationModel);
+
+        player.sendMessage(
+                color.getColorCode() +
+                        color.name() +
+                        Formatting.formatLocation(locationModel, 1, "spectator position placed at %s, %s, %s")
+        );
+
+        return true;
+    }
+
     @Command(names = "setnexus")
     public boolean setupNexus(
             @Sender Player player,
-            TeamColor teamColor,
+            TeamColor color,
             int health
     ) {
-        SetupContext context = getSetupContext(player);
+        SetupContext<MatchMapData> context = getSetupContext(player);
 
         if (context == null)
             return true;
 
         Block facingBlock = player.getTargetBlock(
-                null,
+                (Set<Material>) null,
                 5
         );
 
@@ -115,24 +107,36 @@ public class MapSetupCommand implements CommandClass {
 
         Location location = facingBlock.getLocation();
 
-        setNexusModel(
-                teamColor,
-                new NexusModel(health, Conversions.fromBukkitLocation(location)),
-                context.getChangesProduced()
-        );
+        MatchMapData changesProduced = context.getChangesProduced();
 
-        player.sendMessage(teamColor.getColorCode() + teamColor.name() + " nexus settled correctly");
+        TeamDataModel dataModel = changesProduced.getTeamData(color);
+
+        dataModel.setNexus(new NexusModel(health, LocationModel.fromBukkit(location)));
+
+        player.sendMessage(color.getColoredName() + " nexus settled correctly");
 
         return true;
     }
 
-    private SetupContext getSetupContext(Player player) {
-        SetupContext setupContext = setupManager.getSession(player);
+    @SuppressWarnings("unchecked")
+    private SetupContext<MatchMapData> getSetupContext(Player player) {
+        SetupContext<?> setupContext = modelSetupManager.getSession(player);
 
         if (setupContext == null) {
-            player.sendMessage("You're not editing any maps.");
+            player.sendMessage("You're not editing any map.");
+        } else {
+            ModelData data = setupContext.getEditingTarget().getData();
+
+            if (!(data instanceof MatchMapData)) {
+                player.sendMessage("This map is not a match map model");
+            }
         }
 
-        return setupContext;
+        return (SetupContext<MatchMapData>) setupContext;
+    }
+
+    private LocationModel normalizePosition(Player player) {
+        return LocationModel.fromBukkit(player
+                .getLocation().getBlock().getLocation().add(0.5, 0.5, 0.5));
     }
 }

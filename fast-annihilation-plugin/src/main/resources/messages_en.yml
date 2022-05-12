@@ -1,0 +1,7 @@
+starting-game: "&aThe game will start in a few moments"
+game-start-in:
+  30: "&bThe game starts in &e30 &bseconds"
+  3: "&bThe game starts in &e3 &bseconds"
+  2: "&bThe game starts in &e2 &bseconds"
+  1: "&bThe game starts in &e1 &bsecond"
+countdown-insufficient-players: "&cCountdown stopped, insufficient players."

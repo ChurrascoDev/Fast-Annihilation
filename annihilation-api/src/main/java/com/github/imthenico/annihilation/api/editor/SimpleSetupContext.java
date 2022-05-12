@@ -1,33 +1,29 @@
 package com.github.imthenico.annihilation.api.editor;
 
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
+import com.github.imthenico.annihilation.api.model.map.data.EditableMapData;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
-import com.github.imthenico.annihilation.api.property.PropertiesContainer;
-import com.github.imthenico.simplecommons.util.Validate;
+import com.github.imthenico.gmlib.MapModel;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SimpleSetupContext<T extends ConfigurableModel> implements SetupContext {
+public class SimpleSetupContext<T extends EditableMapData> implements SetupContext<T> {
 
-    private final T target;
+    private final MapModel<T> target;
+    private final T data;
     private final Map<UUID, AnniPlayer> editors;
-    private final PropertiesContainer changes;
 
-    public SimpleSetupContext(T target) {
-        this(target, target.getProperties());
-    }
-
-    public SimpleSetupContext(T target, PropertiesContainer propertiesContainer) {
+    @SuppressWarnings("unchecked")
+    public SimpleSetupContext(MapModel<T> target) {
         this.target = target;
-        this.changes = propertiesContainer.copy();
+        this.data = (T) target.getData().copy();
         this.editors = new HashMap<>();
     }
 
     @Override
-    public ConfigurableModel getEditingTarget() {
+    public MapModel<T> getEditingTarget() {
         return target;
     }
 
@@ -38,20 +34,16 @@ public class SimpleSetupContext<T extends ConfigurableModel> implements SetupCon
 
     @Override
     public void addEditor(AnniPlayer anniPlayer) throws IllegalArgumentException {
-        Validate.isTrue(!editors.containsKey(anniPlayer.getId()), "Player is already editing");
-
         this.editors.put(anniPlayer.getId(), anniPlayer);
     }
 
     @Override
     public void removeEditor(AnniPlayer anniPlayer) throws IllegalArgumentException {
-        Validate.isTrue(editors.containsKey(anniPlayer.getId()), "Player is not editing this map");
-
         this.editors.remove(anniPlayer.getId());
     }
 
     @Override
-    public PropertiesContainer getChangesProduced() {
-        return changes;
+    public T getChangesProduced() {
+        return data;
     }
 }

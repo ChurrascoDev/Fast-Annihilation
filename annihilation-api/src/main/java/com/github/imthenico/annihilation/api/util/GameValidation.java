@@ -1,43 +1,42 @@
 package com.github.imthenico.annihilation.api.util;
 
-import com.github.imthenico.annihilation.api.cache.ConfigurableModelCache;
-import com.github.imthenico.annihilation.api.game.GameInstance;
+import com.github.imthenico.annihilation.api.game.Game;
 import com.github.imthenico.annihilation.api.game.PreMatchStage;
-import com.github.imthenico.annihilation.api.map.model.NexusModel;
-import com.github.imthenico.annihilation.api.model.ConfigurableModel;
-import com.github.imthenico.annihilation.api.property.PropertiesContainer;
-import com.github.imthenico.annihilation.api.property.PropertyKeys;
-import com.github.imthenico.annihilation.api.service.ConfigurableModelService;
+import com.github.imthenico.annihilation.api.game.Rules;
+import com.github.imthenico.annihilation.api.model.ModelCache;
+import com.github.imthenico.annihilation.api.model.TeamDataModel;
+import com.github.imthenico.annihilation.api.model.map.data.MatchMapData;
 import com.github.imthenico.annihilation.api.team.TeamColor;
-import com.github.imthenico.simplecommons.minecraft.LocationModel;
+import com.github.imthenico.gmlib.MapModel;
+import com.github.imthenico.gmlib.ModelData;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public interface GameValidation {
 
-    static boolean hasAvailableMaps(GameInstance game, ConfigurableModelCache modelService) {
-        GameInstance.Rules rules = game.getRules();
+    static boolean hasAvailableMaps(Game game, ModelCache modelService) {
+        Rules rules = game.getRules();
         List<String> allowedMapNames = rules.getAllowedMaps();
-        Set<ConfigurableModel> availableMaps = new HashSet<>();
 
         if (allowedMapNames.isEmpty()) {
-            modelService.getModels().forEach((k, v) -> availableMaps.add(v));
-        } else {
-            for (String allowedMapName : allowedMapNames) {
-                ConfigurableModel configurableModel = modelService.getModel(allowedMapName);
-
-                if (configurableModel == null || !ModelUtil.hasTag(configurableModel, "map-model"))
-                    continue;
-
-                availableMaps.add(configurableModel);
-            }
+            return modelService.count() > 0;
         }
 
-        return !availableMaps.isEmpty();
+        for (MapModel<?> value : modelService) {
+            if (!allowedMapNames.contains(value.getName()))
+                continue;
+
+            ModelData mapData = value.getData();
+
+            if (mapData instanceof MatchMapData)
+                return true;
+        }
+
+        return false;
     }
 
-    static boolean balancedTeams(GameInstance game) {
+    static boolean balancedTeams(Game game) {
         PreMatchStage preparationStage = game.getPreparationStage();
 
         Map<UUID, TeamColor> playersTeamSelection = preparationStage.getTeamSelection();
@@ -57,27 +56,14 @@ public interface GameValidation {
         return true;
     }
 
-    static boolean isMapCorrectlyConfigured(ConfigurableModel mapModel) {
-        if (!ModelUtil.hasTag(mapModel, "map-model")) {
-            return false;
-        }
-
-        PropertiesContainer properties = mapModel.getProperties();
-
+    static boolean isDataCorrectlyConfigured(MatchMapData data) {
         for (TeamColor value : TeamColor.values()) {
-            Collection<LocationModel> spawns = properties.getProperty(PropertyKeys.teamSpawns(value))
-                    .orDefault(Collections::emptyList);
-
-            NexusModel nexus = properties.getProperty(PropertyKeys.teamNexus(value))
-                    .orDefault(() -> null);
-
-            Collection<LocationModel> spectatorSpawns = properties.getProperty(PropertyKeys.teamSpectatorPositions(value))
-                    .orDefault(Collections::emptyList);
+            TeamDataModel teamDataModel = data.getTeamData().get(value);
 
             if (
-                    spawns.isEmpty()
-                    || nexus == null
-                    || spectatorSpawns.isEmpty()
+                    teamDataModel.getSpawns().isEmpty()
+                    || teamDataModel.nexus() == null
+                    || teamDataModel.getSpectatorPositions().isEmpty()
             ) {
                 return false;
             }

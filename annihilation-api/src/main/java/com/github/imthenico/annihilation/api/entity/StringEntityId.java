@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.entity;
 
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 
 import java.util.Objects;
 
@@ -9,7 +9,7 @@ public class StringEntityId {
     private final String id;
 
     public StringEntityId(String id) {
-        this.id = Validate.notNull(id);
+        this.id = Objects.requireNonNull(id);
     }
 
     @Override

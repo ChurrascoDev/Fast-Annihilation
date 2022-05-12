@@ -1,19 +1,21 @@
 package com.github.imthenico.annihilation.api.entity;
 
 import com.github.imthenico.annihilation.api.equipment.Kit;
-import com.github.imthenico.annihilation.api.game.GameInstance;
+import com.github.imthenico.annihilation.api.game.Game;
+import com.github.imthenico.annihilation.api.game.GameRoom;
 import com.github.imthenico.annihilation.api.lang.LangHolder;
 import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.team.MatchTeam;
-import com.github.imthenico.simplecommons.util.Validate;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class MatchPlayer implements Entity<AnniPlayer>, Spawnable, LangHolder {
+public class MatchPlayer implements LangHolder, WrappedEntity {
 
     private final AnniPlayer rootPlayer;
     private final Match match;
@@ -25,16 +27,34 @@ public class MatchPlayer implements Entity<AnniPlayer>, Spawnable, LangHolder {
             AnniPlayer rootPlayer,
             Match match
     ) {
-        this.rootPlayer = Validate.notNull(rootPlayer);
-        this.match = Validate.notNull(match);
+        this.rootPlayer = Objects.requireNonNull(rootPlayer);
+        this.match = Objects.requireNonNull(match);
+    }
+
+    public static MatchPlayer from(AnniPlayer anniPlayer) {
+        GameRoom gameRoom = anniPlayer.getPlayingRoom();
+
+        if (gameRoom == null || !gameRoom.isEnabled())
+            return null;
+
+        Game game = gameRoom.game();
+
+        Match match = game.runningMatch();
+        if (match != null) {
+            return match.getPlayer(anniPlayer);
+        }
+
+        return null;
     }
 
     public Match getMatch() {
         return match;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    public Player getPlayer() {
+        return rootPlayer.getPlayer();
+    }
+
     public AnniPlayer getHandle() {
         return rootPlayer;
     }
@@ -44,9 +64,9 @@ public class MatchPlayer implements Entity<AnniPlayer>, Spawnable, LangHolder {
     }
 
     public boolean isPlaying() {
-        GameInstance gameInstance = getMatch().getGame();
+        GameRoom gameRoom = getMatch().getGame().room();
 
-        return gameInstance.isInGame(rootPlayer) && team != null && team.isDeath();
+        return gameRoom.isWithin(rootPlayer) && team != null && team.isDeath();
     }
 
     public Kit getKit() {
@@ -66,14 +86,28 @@ public class MatchPlayer implements Entity<AnniPlayer>, Spawnable, LangHolder {
     }
 
     public void handleTeamJoin(MatchTeam team) {
-        Validate.isTrue(team != null && team.isMember(this), "Invalid team or player is not member.");
-        Validate.isTrue(!team.equals(this.team), "This player is already in that team.");
+        if (team != null) {
+            if (team.equals(this.team))
+                throw new IllegalArgumentException("This player is already in the team");
+
+            if (!team.isMember(this))
+                throw new IllegalArgumentException("Invalid team or player is not member");
+        }
 
         this.team = team;
     }
 
     public void handleTeamLeave(MatchTeam team) {
-        Validate.isTrue(Validate.notNull(team).equals(this.team) && !team.isMember(this), "Invalid team or player is member.");
+        if (this.team == null)
+            return;
+
+        if (!this.team.equals(team)) {
+            throw new IllegalArgumentException("The player is not in the team");
+        }
+
+        if (team.isMember(this)) {
+            throw new IllegalStateException("Player is still in the team");
+        }
 
         this.team = null;
     }
@@ -95,18 +129,6 @@ public class MatchPlayer implements Entity<AnniPlayer>, Spawnable, LangHolder {
         return Objects.hash(rootPlayer);
     }
 
-    @Override
-    public void spawn() {
-        Validate.notNull(team, "The player isn't on any team.");
-
-        Player player = rootPlayer.getPlayer();
-
-        if (isDeath()) {
-            player.spigot().respawn();
-        }
-    }
-
-    @Override
     public boolean isSpawned() {
         return !isDeath();
     }
@@ -119,4 +141,10 @@ public class MatchPlayer implements Entity<AnniPlayer>, Spawnable, LangHolder {
     public @Nullable String getLang() {
         return rootPlayer.getLang();
     }
+
+    @Override
+    public Entity getBukkitEntity() {
+        return rootPlayer.getPlayer();
+    }
+
 }

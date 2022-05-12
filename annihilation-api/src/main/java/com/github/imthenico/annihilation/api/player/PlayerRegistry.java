@@ -1,8 +1,5 @@
 package com.github.imthenico.annihilation.api.player;
 
-import com.github.imthenico.simplecommons.iterator.UnmodifiableIterator;
-import com.github.imthenico.simplecommons.util.Validate;
-
 import java.util.*;
 
 public class PlayerRegistry implements Iterable<AnniPlayer> {
@@ -13,12 +10,14 @@ public class PlayerRegistry implements Iterable<AnniPlayer> {
         this.playerMap = new HashMap<>();
     }
 
-    public Optional<AnniPlayer> getPlayer(UUID uuid) {
-        return Optional.ofNullable(playerMap.get(uuid));
+    public AnniPlayer getPlayer(UUID uuid) {
+        return playerMap.get(uuid);
     }
 
     public void registerPlayer(AnniPlayer player) {
-        Validate.isTrue(!exists(player.getId()), "This player is already registered.");
+        if (exists(player.getId())) {
+            throw new IllegalArgumentException("This player is already registered.");
+        }
 
         this.playerMap.put(player.getId(), player);
     }
@@ -29,6 +28,18 @@ public class PlayerRegistry implements Iterable<AnniPlayer> {
 
     @Override
     public Iterator<AnniPlayer> iterator() {
-        return new UnmodifiableIterator<>(playerMap.values().iterator());
+        Iterator<AnniPlayer> iterator = playerMap.values().iterator();
+
+        return new Iterator<AnniPlayer>() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public AnniPlayer next() {
+                return iterator.next();
+            }
+        };
     }
 }

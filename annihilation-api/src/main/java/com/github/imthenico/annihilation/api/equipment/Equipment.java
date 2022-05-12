@@ -1,7 +1,7 @@
 package com.github.imthenico.annihilation.api.equipment;
 
 import com.github.imthenico.annihilation.api.item.ItemContainer;
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class Equipment {
             ItemContainer inventory
     ) {
         this.armorPieces = new HashMap<>(armorPieces.size());
-        this.inventory = Validate.notNull(inventory);
+        this.inventory = Objects.requireNonNull(inventory);
 
         armorPieces.forEach((k, v) -> this.armorPieces.put(k, v.clone()));
     }

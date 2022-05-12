@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 
 public abstract class AbstractMatchClosingStage implements MatchClosingStage {
 
@@ -8,7 +8,7 @@ public abstract class AbstractMatchClosingStage implements MatchClosingStage {
 
     @Override
     public void setMatch(Match match) {
-        this.match = Validate.notNull(match);
+        this.match = Objects.requireNonNull(match);
     }
 
     protected Match match() {

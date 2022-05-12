@@ -1,9 +1,7 @@
 package com.github.imthenico.annihilation.api.phase;
 
 import com.github.imthenico.annihilation.api.match.Match;
-import com.github.imthenico.annihilation.api.phase.PhaseAction;
-import com.github.imthenico.annihilation.api.phase.PhaseActionFactory;
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 import me.yushust.message.MessageHandler;
 
 public class DefaultPhaseFactory implements PhaseActionFactory {
@@ -11,7 +9,7 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
     private final MessageHandler messageHandler;
 
     public DefaultPhaseFactory(MessageHandler messageHandler) {
-        this.messageHandler = Validate.notNull(messageHandler);
+        this.messageHandler = Objects.requireNonNull(messageHandler);
     }
 
     @Override
@@ -58,7 +56,8 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
 
     private PhaseAction fourthPhase() {
         return (phase, game) -> {
-            Match match = game.getMatch();
+            Match match = game.runningMatch();
+
             /*
             for (Boss<?> boss : environment.getBosses().values()) {
                 if (boss.isSpawned()) {
@@ -73,7 +72,7 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
 
     private PhaseAction fifthPhase() {
         return (phase, game) -> {
-            game.getOptions().setDoubleNexusDamage(true);
+            game.getOptions().setNexusDamageMultiplier(2);
 
             messageHandler.send(game, "broadcast.fifth-phase");
         };

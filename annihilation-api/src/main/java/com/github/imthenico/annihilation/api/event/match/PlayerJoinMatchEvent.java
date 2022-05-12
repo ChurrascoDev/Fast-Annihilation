@@ -1,0 +1,23 @@
+package com.github.imthenico.annihilation.api.event.match;
+
+import com.github.imthenico.annihilation.api.entity.MatchPlayer;
+import com.github.imthenico.annihilation.api.event.match.PlayerMatchEvent;
+import org.bukkit.event.HandlerList;
+
+public class PlayerJoinMatchEvent extends PlayerMatchEvent {
+
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
+    public PlayerJoinMatchEvent(MatchPlayer matchPlayer) {
+        super(matchPlayer);
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLER_LIST;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLER_LIST;
+    }
+}

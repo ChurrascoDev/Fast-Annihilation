@@ -1,19 +1,22 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.entity.EntityId;
-import com.github.imthenico.annihilation.api.entity.UUIDEntityId;
-import com.github.imthenico.annihilation.api.event.MatchFinalizeEvent;
-import com.github.imthenico.annihilation.api.game.GameInstance;
-import com.github.imthenico.annihilation.api.ingame.MatchMap;
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
+import com.github.imthenico.annihilation.api.event.match.PlayerJoinMatchEvent;
+import com.github.imthenico.annihilation.api.event.match.PlayerLeaveMatchEvent;
+import com.github.imthenico.annihilation.api.event.match.MatchEndEvent;
+import com.github.imthenico.annihilation.api.event.match.MatchFinalizeEvent;
+import com.github.imthenico.annihilation.api.event.match.MatchStartEvent;
+import com.github.imthenico.annihilation.api.game.Game;
+import com.github.imthenico.annihilation.api.game.PreMatchStage;
+import com.github.imthenico.annihilation.api.model.map.MatchMap;
 import com.github.imthenico.annihilation.api.phase.PhaseManager;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
-import com.github.imthenico.annihilation.api.player.PlayerEventHandler;
 import com.github.imthenico.annihilation.api.player.PlayerSetup;
-import com.github.imthenico.annihilation.api.scheduler.Scheduler;
+import com.github.imthenico.annihilation.api.team.MatchTeam;
+import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
-import com.github.imthenico.simplecommons.util.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -21,33 +24,25 @@ import java.util.function.Predicate;
 public class DefaultMatch implements Match {
 
     private final Set<Object> disqualifiedPlayers;
-    private final String typeName;
+    private final Map<UUID, MatchPlayer> players;
 
-    private MatchMap runningMap;
-    private MatchEventHandler eventHandler;
-    private GameInstance game;
-    private PhaseManager phaseManager;
+    private final MatchMap runningMap;
+    private final Game game;
+    private final PhaseManager phaseManager;
     private boolean finalized;
-    private MatchClosingStage ending;
-    private PlayerSetup playerSetup;
-    private PlayerEventHandler playerEventHandler;
+    private final MatchClosingStage ending;
+    private final PlayerSetup playerSetup;
     private boolean started;
-    private Scheduler scheduler;
 
-    public DefaultMatch(
-            String typeName,
+    DefaultMatch(
             MatchMap runningMap,
-            MatchEventHandler eventHandler,
-            GameInstance game,
+            Game game,
             PhaseManager phaseManager,
             MatchClosingStage ending,
-            PlayerSetup playerSetup,
-            PlayerEventHandler playerEventHandler,
-            Scheduler scheduler
+            PlayerSetup playerSetup
     ) {
-        this.typeName = typeName;
         this.runningMap = runningMap;
-        this.eventHandler = eventHandler;
+
         this.game = game;
         this.phaseManager = phaseManager;
 
@@ -55,24 +50,17 @@ public class DefaultMatch implements Match {
 
         this.ending = new UnmodifiableClosingStage(ending);
         this.disqualifiedPlayers = new HashSet<>();
+        this.players = new HashMap<>();
         this.playerSetup = playerSetup;
-        this.playerEventHandler = playerEventHandler;
-        this.scheduler = scheduler;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public MatchMap getRunningMap() {
         return runningMap;
     }
 
     @Override
-    public MatchEventHandler getEventHandler() {
-        return eventHandler;
-    }
-
-    @Override
-    public GameInstance getGame() {
+    public Game getGame() {
         return game;
     }
 
@@ -87,14 +75,8 @@ public class DefaultMatch implements Match {
     }
 
     @Override
-    public PlayerEventHandler getPlayerEventHandler() {
-        return playerEventHandler;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
     public MatchPlayer getPlayer(AnniPlayer player) {
-        return runningMap.getEntity(new UUIDEntityId(player.getId())).orDefault(null);
+        return players.get(player.getId());
     }
 
     @Override
@@ -112,33 +94,30 @@ public class DefaultMatch implements Match {
     }
 
     @Override
-    public void leave(AnniPlayer player) {
-        Validate.isTrue(game.isInGame(player), "This player is not playing this game.");
+    public void handleLeave(MatchPlayer matchPlayer) {
+        if (!players.containsKey(matchPlayer.getUniqueId()) || !equals(matchPlayer.getMatch()))
+            throw new IllegalArgumentException("Invalid match player");
 
-        MatchPlayer matchPlayer = getPlayer(player);
-
-        if (matchPlayer != null) {
-            playerEventHandler.handleLeave(matchPlayer);
-        }
+        Bukkit.getPluginManager().callEvent(new PlayerLeaveMatchEvent(matchPlayer));
     }
 
     @Override
-    public void join(AnniPlayer player) {
-        Validate.isTrue(game.isInGame(player), "This player is not playing this game.");
-
-        EntityId entityId = new UUIDEntityId(player.getId());
+    public MatchPlayer handleJoin(AnniPlayer player) {
+        if (game.room().isWithin(player)) {
+            throw new IllegalStateException("This player is already playing this match");
+        }
 
         MatchPlayer matchPlayer = getPlayer(player);
 
-        if (matchPlayer != null) {
-            Validate.isTrue(!matchPlayer.isDisqualified(), "Player is disqualified");
-        } else {
+        if (matchPlayer == null) {
             matchPlayer = new MatchPlayer(player, this);
 
-            runningMap.addEntity(entityId, matchPlayer);
+            this.players.put(player.getId(), matchPlayer);
+
+            Bukkit.getPluginManager().callEvent(new PlayerJoinMatchEvent(matchPlayer));
         }
 
-        playerEventHandler.handleJoin(matchPlayer);
+        return matchPlayer;
     }
 
     @Override
@@ -159,7 +138,7 @@ public class DefaultMatch implements Match {
 
         Bukkit.getPluginManager().callEvent(new MatchFinalizeEvent(this));
 
-        runningMap.getWorlds().values().forEach(simpleWorld -> Bukkit.unloadWorld(simpleWorld.getWorld(), false));
+        runningMap.allWorlds().forEach(world -> Bukkit.unloadWorld((World) world.handle(), false));
     }
 
     @Override
@@ -174,12 +153,28 @@ public class DefaultMatch implements Match {
 
         this.started = true;
 
-        eventHandler.handleMatchStart(this);
+        PreMatchStage preMatchStage = game.getPreparationStage();
+
+        Map<UUID, TeamColor> teamSelection = preMatchStage.getTeamSelection();
+
+        for (AnniPlayer player : game.room().getPlayers((p) -> true)) {
+            TeamColor color = teamSelection.get(player.getId());
+
+            if (color == null)
+                continue;
+
+            MatchPlayer matchPlayer = handleJoin(player);
+
+            MatchTeam team = runningMap.getTeam(color);
+            team.join(matchPlayer);
+        }
+
+        Bukkit.getPluginManager().callEvent(new MatchStartEvent(this));
     }
 
     @Override
     public void end() {
-        eventHandler.handleMatchEnd(getState());
+        Bukkit.getPluginManager().callEvent(new MatchEndEvent(this));
 
         ending.start();
     }
@@ -196,12 +191,9 @@ public class DefaultMatch implements Match {
     public Collection<MatchPlayer> getPlayers(Predicate<MatchPlayer> filter) {
         List<MatchPlayer> matchPlayers = new ArrayList<>();
 
-        for (EntityId entityId : runningMap.getEntitiesId()) {
-            MatchPlayer matchPlayer = runningMap.getEntity(entityId).orDefault(null);
-
-            if (matchPlayer != null && filter.test(matchPlayer)) {
+        for (MatchPlayer matchPlayer : players.values()) {
+            if (filter.test(matchPlayer))
                 matchPlayers.add(matchPlayer);
-            }
         }
 
         return matchPlayers;
@@ -209,7 +201,7 @@ public class DefaultMatch implements Match {
 
     @Override
     public String getTypeName() {
-        return typeName;
+        return game.getTypeName();
     }
 
     private void checkState() {

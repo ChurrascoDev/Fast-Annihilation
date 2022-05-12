@@ -1,23 +1,35 @@
 package com.github.imthenico.annihilation.api.player;
 
-import com.github.imthenico.annihilation.api.game.GameInstance;
+import com.github.imthenico.annihilation.api.game.Game;
+import com.github.imthenico.annihilation.api.game.GameRoom;
 import com.github.imthenico.annihilation.api.lang.LangHolder;
-import com.github.imthenico.simplecommons.util.Validate;
+import com.github.imthenico.annihilation.api.util.Formatting;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public final class AnniPlayer implements LangHolder {
 
     private final UUID uuid;
-    private GameInstance playingGame;
+    private final Supplier<Player> playerSupplier;
+    private GameRoom playingRoom;
     private String lang;
 
     public AnniPlayer(Player player) {
-        this.uuid = Validate.notNull(player.getUniqueId());
+        this(() -> {
+            UUID uuid = player.getUniqueId();
+
+            return Bukkit.getPlayer(uuid);
+        });
+    }
+
+    public AnniPlayer(Supplier<Player> playerSupplier) {
+        this.playerSupplier = Objects.requireNonNull(playerSupplier);
+        this.uuid = playerSupplier.get().getUniqueId();
     }
 
     @Override
@@ -38,22 +50,44 @@ public final class AnniPlayer implements LangHolder {
     }
 
     public Player getPlayer() {
-        return Bukkit.getPlayer(uuid);
+        return playerSupplier.get();
     }
 
-    public GameInstance getPlayingGame() {
-        return playingGame;
+    public GameRoom getPlayingRoom() {
+        return playingRoom;
     }
 
-    public void handleInternalGameJoin(GameInstance game) {
-        this.playingGame = Validate.notNull(game);
-        Validate.isTrue(game.isInGame(this), "Register player after handle game join.");
+    public Game getPlayingGame() {
+        if (playingRoom == null)
+            return null;
+
+        return playingRoom.game();
     }
 
-    public void handleInternalGameLeave(GameInstance game) {
-        Validate.isTrue(this.playingGame == game, "game != playingGame");
-        Validate.isTrue(!game.isInGame(this), "Remove player after handle game leave.");
+    public void handleInternalGameJoin(GameRoom game) {
+        if (!game.isWithin(this)) {
+            throw new IllegalStateException("Register player after handle game join.");
+        }
 
-        this.playingGame = null;
+        this.playingRoom = Objects.requireNonNull(game);
+    }
+
+    public void handleInternalGameLeave(GameRoom game) {
+        if (playingRoom != game) {
+            throw new IllegalArgumentException("game != playingGame");
+        }
+
+        if (game.isWithin(this)) {
+            throw new IllegalStateException("Remove player after handle game leave.");
+        }
+
+        this.playingRoom = null;
+    }
+
+    public void sendMessage(String message, boolean colorize) {
+        if (colorize)
+            message = Formatting.colorize(message);
+
+        getPlayer().sendMessage(message);
     }
 }

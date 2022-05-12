@@ -1,14 +1,13 @@
 package com.github.imthenico.annihilation.api.message;
 
-import com.github.imthenico.simplecommons.util.Validate;
-
 public class MessagePath {
 
     private final String defaultMessage;
     private final String messagePath;
 
     public MessagePath(String defaultMessage, String messagePath) {
-        this.defaultMessage = Validate.defIfNull(defaultMessage, "");
+        this.defaultMessage = defaultMessage != null ? defaultMessage : "";
+
         this.messagePath = messagePath;
     }
 

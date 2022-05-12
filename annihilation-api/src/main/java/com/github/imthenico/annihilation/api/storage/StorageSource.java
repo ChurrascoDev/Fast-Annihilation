@@ -2,12 +2,12 @@ package com.github.imthenico.annihilation.api.storage;
 
 public class StorageSource {
 
-    private final StorageSourceType type;
     private final Object handle;
+    private final StorageSourceType type;
 
-    public StorageSource(StorageSourceType type, Object handle) {
-        this.type = type;
+    public StorageSource(Object handle, StorageSourceType type) {
         this.handle = handle;
+        this.type = type;
     }
 
     @SuppressWarnings("unchecked")

@@ -8,7 +8,7 @@ public interface PhaseManager extends Runnable {
 
     Collection<Integer> getPhases();
 
-    void start() throws IllegalArgumentException;
+    void start() throws UnsupportedOperationException;
 
     RunnablePhase next() throws UnsupportedOperationException;
 

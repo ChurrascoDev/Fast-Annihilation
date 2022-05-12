@@ -1,8 +1,8 @@
 package com.github.imthenico.annihilation.api.team;
 
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
-import com.github.imthenico.annihilation.api.ingame.Nexus;
-import com.github.imthenico.annihilation.api.world.LocationReference;
+import com.github.imthenico.annihilation.api.model.map.Nexus;
+import org.bukkit.Location;
 
 public interface MatchTeam extends Iterable<MatchPlayer> {
 
@@ -10,9 +10,9 @@ public interface MatchTeam extends Iterable<MatchPlayer> {
 
     Nexus getNexus();
 
-    LocationReference getSpawn(int index);
+    Location getSpawn(int index);
 
-    LocationReference getRandomSpawn();
+    Location getRandomSpawn();
 
     boolean join(MatchPlayer matchPlayer);
 

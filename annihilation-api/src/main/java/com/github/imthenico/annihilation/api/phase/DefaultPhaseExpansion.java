@@ -1,8 +1,6 @@
 package com.github.imthenico.annihilation.api.phase;
 
-import com.github.imthenico.annihilation.api.phase.PhaseActionFactory;
-import com.github.imthenico.annihilation.api.phase.PhaseExpansion;
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 import me.yushust.message.MessageHandler;
 
 public class DefaultPhaseExpansion implements PhaseExpansion {
@@ -10,7 +8,7 @@ public class DefaultPhaseExpansion implements PhaseExpansion {
     private final MessageHandler messageHandler;
 
     public DefaultPhaseExpansion(MessageHandler messageHandler) {
-        this.messageHandler = Validate.notNull(messageHandler);
+        this.messageHandler = Objects.requireNonNull(messageHandler);
     }
 
     @Override

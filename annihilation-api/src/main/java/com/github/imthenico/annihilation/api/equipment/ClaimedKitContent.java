@@ -2,7 +2,7 @@ package com.github.imthenico.annihilation.api.equipment;
 
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
 import com.github.imthenico.annihilation.api.item.ItemContainer;
-import com.github.imthenico.simplecommons.util.Validate;
+import java.util.Objects;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -71,7 +71,10 @@ public class ClaimedKitContent {
     }
 
     public static ClaimedKitContent of(MatchPlayer matchPlayer) {
-        Kit kit = Validate.defIfNull(matchPlayer.getKit(), empty());
+        Kit kit = matchPlayer.getKit();
+
+        if (kit == null)
+            kit = empty();
 
         return new ClaimedKitContent(matchPlayer.getHandle().getPlayer(), kit);
     }

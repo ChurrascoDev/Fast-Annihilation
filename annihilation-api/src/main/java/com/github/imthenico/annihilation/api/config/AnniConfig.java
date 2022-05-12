@@ -1,10 +1,10 @@
 package com.github.imthenico.annihilation.api.config;
 
-import com.github.imthenico.annihilation.api.mapping.DefaultMapperInstance;
-import com.github.imthenico.simplecommons.data.db.UserCredential;
+import com.github.imthenico.annihilation.api.db.UserCredential;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,12 +59,22 @@ public class AnniConfig implements ConfigurationSerializable {
 
     @NotNull
     @Override
-    @SuppressWarnings("unchecked")
     public Map<String, Object> serialize() {
-        return DefaultMapperInstance.getMapper().mapDirectly(this, Map.class);
+        Map<String, Object> objectMap = new HashMap<>();
+
+        objectMap.put("swmLoaderName", swmLoaderName);
+        objectMap.put("storageSourceTypeName", storageSourceTypeName);
+        objectMap.put("userStorageCredential", userStorageCredential);
+
+        return objectMap;
     }
 
+    @SuppressWarnings("unchecked")
     public static AnniConfig deserialize(Map<String, Object> objectMap) {
-        return DefaultMapperInstance.getMapper().fromMap(objectMap, AnniConfig.class);
+        return new AnniConfig(
+                (String) objectMap.get("swmLoaderName"),
+                (String) objectMap.get("storageSourceTypeName"),
+                UserCredential.deserialize((Map<String, Object>) objectMap.get("userStorageCredential"))
+        );
     }
 }

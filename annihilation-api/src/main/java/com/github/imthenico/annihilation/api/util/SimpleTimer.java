@@ -1,14 +1,15 @@
 package com.github.imthenico.annihilation.api.util;
 
-import com.github.imthenico.simplecommons.util.Validate;
-
 public class SimpleTimer {
 
     private final int totalTime;
     private int elapsedTime;
 
     public SimpleTimer(int totalTime) {
-        this.totalTime = Validate.isTrue(totalTime >= 0, "totalUnits < 0", totalTime);
+        if (totalTime < 0)
+            throw new IllegalStateException("totalUnits < 0");
+
+        this.totalTime = totalTime;
         this.elapsedTime = 0;
     }
 
@@ -21,7 +22,8 @@ public class SimpleTimer {
     }
 
     public void elapse(int secondsToElapse, boolean restart) {
-        Validate.isTrue(secondsToElapse >= 0, "toElapse < 0");
+        if (secondsToElapse < 0)
+            throw new IllegalStateException("secondsToElapse < 0");
 
         elapsedTime += secondsToElapse;
 

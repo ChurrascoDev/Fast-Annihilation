@@ -1,30 +1,28 @@
 package com.github.imthenico.annihilation.api.team;
 
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
-import com.github.imthenico.annihilation.api.ingame.Nexus;
-import com.github.imthenico.annihilation.api.map.MapContext;
-import com.github.imthenico.annihilation.api.property.PropertyKeys;
-import com.github.imthenico.annihilation.api.world.LocationReference;
-import com.github.imthenico.simplecommons.iterator.UnmodifiableIterator;
-import com.github.imthenico.simplecommons.util.Validate;
-import com.github.imthenico.simplecommons.util.list.CustomList;
+import com.github.imthenico.annihilation.api.model.map.MatchMap;
+import com.github.imthenico.annihilation.api.model.map.Nexus;
+import com.github.imthenico.annihilation.api.util.RandomElementPicker;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class DefaultTeam implements MatchTeam {
 
     private final TeamColor color;
     private final List<MatchPlayer> members;
-    private final MapContext mapContext;
+    private final MatchMap matchMap;
 
     public DefaultTeam(
             TeamColor color,
-            MapContext mapContext
+            MatchMap matchMap
     ) {
-        this.color = Validate.notNull(color);
-        this.mapContext = Validate.notNull(mapContext);
+        this.color = Objects.requireNonNull(color);
+        this.matchMap = Objects.requireNonNull(matchMap);
         this.members = new ArrayList<>();
     }
 
@@ -35,21 +33,24 @@ public class DefaultTeam implements MatchTeam {
 
     @Override
     public Nexus getNexus() {
-        return mapContext.getProperty(PropertyKeys.teamNexus(color)).orDefault(null);
+        return matchMap.getTeamNexus(color);
     }
 
     @Override
-    public LocationReference getSpawn(int index) {
-        CustomList<LocationReference> spawns = mapContext.getMapProperties(PropertyKeys.teamSpawns(color)).orDefault(null);
+    public Location getSpawn(int index) {
+        List<Location> spawns = matchMap.getTeamSpawns(color);
 
-        return spawns.safeGet(index).orElse(null);
+        if (index >= spawns.size())
+            return null;
+
+        return spawns.get(index);
     }
 
     @Override
-    public LocationReference getRandomSpawn() {
-        CustomList<LocationReference> spawns = mapContext.getMapProperties(PropertyKeys.teamSpawns(color)).orDefault(null);
+    public Location getRandomSpawn() {
+        List<Location> spawns = matchMap.getTeamSpawns(color);
 
-        return spawns.random().orElse(null);
+        return RandomElementPicker.pickRandom(spawns);
     }
 
     @Override
@@ -85,7 +86,19 @@ public class DefaultTeam implements MatchTeam {
 
     @Override
     public Iterator<MatchPlayer> iterator() {
-        return new UnmodifiableIterator<>(members.iterator());
+        Iterator<MatchPlayer> iterator = members.iterator();
+
+        return new Iterator<MatchPlayer>() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public MatchPlayer next() {
+                return iterator.next();
+            }
+        };
     }
 
     private void otherTeamsMemberCheck(MatchPlayer matchPlayer) {
@@ -93,9 +106,10 @@ public class DefaultTeam implements MatchTeam {
             if (color == this.color)
                 continue;
 
-            MatchTeam gameTeam = mapContext.getTeam(color);
+            MatchTeam gameTeam = matchMap.getTeam(color);
 
-            Validate.isTrue(!gameTeam.isMember(matchPlayer), "That player is already member of other team.");
+            if (gameTeam.isMember(matchPlayer))
+                throw new IllegalArgumentException("That player is already member of other team.");
         }
     }
 }

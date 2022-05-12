@@ -1,11 +1,10 @@
 package com.github.imthenico.annihilation.api.match;
 
-import com.github.imthenico.annihilation.api.game.GameInstance;
-import com.github.imthenico.annihilation.api.ingame.MatchMap;
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
+import com.github.imthenico.annihilation.api.game.Game;
+import com.github.imthenico.annihilation.api.model.map.MatchMap;
 import com.github.imthenico.annihilation.api.phase.PhaseManager;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
-import com.github.imthenico.annihilation.api.player.PlayerEventHandler;
 import com.github.imthenico.annihilation.api.player.PlayerSetup;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
 
@@ -17,19 +16,15 @@ public interface Match {
 
     MatchMap getRunningMap();
 
-    MatchEventHandler getEventHandler();
-
-    GameInstance getGame();
+    Game getGame();
 
     PhaseManager getPhaseManager();
 
     PlayerSetup getPlayerSetup();
 
-    PlayerEventHandler getPlayerEventHandler();
+    void handleLeave(MatchPlayer matchPlayer);
 
-    void leave(AnniPlayer player);
-
-    void join(AnniPlayer player);
+    MatchPlayer handleJoin(AnniPlayer player);
 
     MatchPlayer getPlayer(AnniPlayer player);
 
@@ -65,7 +60,7 @@ public interface Match {
 
     /**
      * This method is used to identify different types of
-     * matches with different game functions, characteristics, etc.
+     * games with different game functions, characteristics, etc.
      */
     String getTypeName();
 }

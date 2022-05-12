@@ -32,11 +32,17 @@ public class SafeCast<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public <S> S orThrow(Throwable throwable) throws Throwable {
+    public <S> S orThrow(ThrowableSupplier<Throwable> throwableSupplier) {
         try {
             return (S) source;
         } catch (ClassCastException e) {
-            throw throwable;
+            try {
+                throw throwableSupplier.get();
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+            }
+
+            return null;
         }
     }
 
