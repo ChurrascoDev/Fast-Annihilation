@@ -1,4 +1,4 @@
-package com.github.imthenico.annihilation.api.task;
+package com.github.imthenico.fastannihilation.task;
 
 import com.github.imthenico.annihilation.api.game.Game;
 import com.github.imthenico.annihilation.api.game.GameRoom;
