@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.strategy;
 
-import com.github.imthenico.annihilation.api.model.map.data.MatchMapData;
+import com.github.imthenico.annihilation.api.model.map.MatchMapData;
 import com.github.imthenico.gmlib.MapModel;
 import org.jetbrains.annotations.NotNull;
 

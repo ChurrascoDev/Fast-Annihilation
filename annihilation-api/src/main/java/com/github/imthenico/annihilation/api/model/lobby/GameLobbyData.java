@@ -1,7 +1,7 @@
 package com.github.imthenico.annihilation.api.model.lobby;
 
 import com.github.imthenico.annihilation.api.model.LocationModel;
-import com.github.imthenico.annihilation.api.model.map.data.EditableMapData;
+import com.github.imthenico.annihilation.api.model.EditableMapData;
 
 public class GameLobbyData extends EditableMapData {
 

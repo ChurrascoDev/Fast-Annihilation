@@ -1,10 +1,10 @@
 package com.github.imthenico.fastannihilation.service;
 
 import com.github.imthenico.annihilation.api.editor.ModelSetupManager;
-import com.github.imthenico.annihilation.api.editor.SimpleAbstractSetupManager;
-import com.github.imthenico.annihilation.api.model.AnniModule;
+import com.github.imthenico.fastannihilation.editor.SimpleAbstractSetupManager;
+import com.github.imthenico.fastannihilation.model.AnniModule;
 import com.github.imthenico.annihilation.api.model.MapModelStorage;
-import com.github.imthenico.annihilation.api.model.MapModelStorageImpl;
+import com.github.imthenico.fastannihilation.model.MapModelStorageImpl;
 import com.github.imthenico.annihilation.api.model.ModelCache;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.util.CompletableFutures;

@@ -1,6 +1,6 @@
 package com.github.imthenico.annihilation.api.editor;
 
-import com.github.imthenico.annihilation.api.model.map.data.EditableMapData;
+import com.github.imthenico.annihilation.api.model.EditableMapData;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.gmlib.MapModel;
 

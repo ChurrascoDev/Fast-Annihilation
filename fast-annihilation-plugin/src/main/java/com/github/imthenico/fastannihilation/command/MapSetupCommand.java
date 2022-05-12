@@ -5,7 +5,7 @@ import com.github.imthenico.annihilation.api.editor.ModelSetupManager;
 import com.github.imthenico.annihilation.api.model.LocationModel;
 import com.github.imthenico.annihilation.api.model.NexusModel;
 import com.github.imthenico.annihilation.api.model.TeamDataModel;
-import com.github.imthenico.annihilation.api.model.map.data.MatchMapData;
+import com.github.imthenico.annihilation.api.model.map.MatchMapData;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.annihilation.api.util.Formatting;
 import com.github.imthenico.gmlib.ModelData;

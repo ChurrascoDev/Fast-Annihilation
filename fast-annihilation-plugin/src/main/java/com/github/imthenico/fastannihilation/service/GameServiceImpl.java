@@ -2,8 +2,8 @@ package com.github.imthenico.fastannihilation.service;
 
 import com.github.imthenico.annihilation.api.game.GameFactory;
 import com.github.imthenico.annihilation.api.game.GameManager;
-import com.github.imthenico.annihilation.api.game.SimpleGameManager;
-import com.github.imthenico.annihilation.api.game.SimpleGameRoomFactory;
+import com.github.imthenico.fastannihilation.game.SimpleGameManager;
+import com.github.imthenico.fastannihilation.game.SimpleGameRoomFactory;
 import com.github.imthenico.annihilation.api.model.ModelCache;
 import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.util.UtilityPack;

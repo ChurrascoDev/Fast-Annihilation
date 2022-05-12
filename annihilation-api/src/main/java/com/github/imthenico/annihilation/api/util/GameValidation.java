@@ -5,7 +5,7 @@ import com.github.imthenico.annihilation.api.game.PreMatchStage;
 import com.github.imthenico.annihilation.api.game.Rules;
 import com.github.imthenico.annihilation.api.model.ModelCache;
 import com.github.imthenico.annihilation.api.model.TeamDataModel;
-import com.github.imthenico.annihilation.api.model.map.data.MatchMapData;
+import com.github.imthenico.annihilation.api.model.map.MatchMapData;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.gmlib.MapModel;
 import com.github.imthenico.gmlib.ModelData;

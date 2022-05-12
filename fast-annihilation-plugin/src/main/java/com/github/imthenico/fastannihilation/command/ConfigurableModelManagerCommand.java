@@ -5,7 +5,7 @@ import com.github.imthenico.annihilation.api.editor.SetupContext;
 import com.github.imthenico.annihilation.api.exception.TimeoutException;
 import com.github.imthenico.annihilation.api.model.MapModelStorage;
 import com.github.imthenico.annihilation.api.model.ModelCache;
-import com.github.imthenico.annihilation.api.model.map.data.EditableMapData;
+import com.github.imthenico.annihilation.api.model.EditableMapData;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.registry.ModelType;
 import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
