@@ -150,6 +150,7 @@ public class SimpleGameRoom implements GameRoom {
 
         PlayerJoinRoomEvent event = new PlayerJoinRoomEvent(this, anniPlayer);
 
+        Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
