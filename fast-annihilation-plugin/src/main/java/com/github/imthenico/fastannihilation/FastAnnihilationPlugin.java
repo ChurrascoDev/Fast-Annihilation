@@ -23,12 +23,15 @@ import com.github.imthenico.annihilation.api.scheduler.SimpleBukkitScheduler;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.service.ScoreboardService;
+import com.github.imthenico.fastannihilation.papi.AnniPlayerExpansion;
+import com.github.imthenico.fastannihilation.papi.GameExpansion;
+import com.github.imthenico.fastannihilation.papi.TeamExpansion;
 import com.github.imthenico.fastannihilation.service.GameServiceImpl;
 import com.github.imthenico.fastannihilation.service.ModelServiceImpl;
 import com.github.imthenico.fastannihilation.service.PluginStorageService;
 import com.github.imthenico.fastannihilation.service.ScoreboardServiceImpl;
 import com.github.imthenico.fastannihilation.storage.AnniStorage;
-import com.github.imthenico.annihilation.api.task.GameTimerUpdater;
+import com.github.imthenico.fastannihilation.task.GameTimerUpdater;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.fastannihilation.command.*;
 import com.github.imthenico.gmlib.pool.WorldPool;
@@ -121,6 +124,9 @@ public class FastAnnihilationPlugin extends JavaPlugin {
 
         // listeners
         registerListeners();
+
+        // placeholders
+        registerPAPIExpansions();
     }
 
     @Override
@@ -128,6 +134,7 @@ public class FastAnnihilationPlugin extends JavaPlugin {
         modelService.end();
         gameService.end();
         storageService.end();
+        scoreboardService.end();
     }
 
     @Override
@@ -145,6 +152,10 @@ public class FastAnnihilationPlugin extends JavaPlugin {
 
     public GameService getGameService() {
         return gameService;
+    }
+
+    public ScoreboardService getScoreboardService() {
+        return scoreboardService;
     }
 
     private void registerAPIService() {
@@ -269,7 +280,7 @@ public class FastAnnihilationPlugin extends JavaPlugin {
 
         gameService.start();
 
-        scoreboardService = new ScoreboardServiceImpl();
+        scoreboardService = new ScoreboardServiceImpl(playerRegistry);
 
         scoreboardService.start();
     }
@@ -284,6 +295,12 @@ public class FastAnnihilationPlugin extends JavaPlugin {
         new MatchListenerModule("anni-match", utilityPack.getMessageHandler(), scheduler, playerRegistry)
                 .getListeners()
                 .forEach(listener -> pluginManager.registerEvents(listener, this));
+    }
+
+    private void registerPAPIExpansions() {
+        new GameExpansion(playerRegistry).register();
+        new AnniPlayerExpansion(playerRegistry).register();
+        new TeamExpansion().register();
     }
 
     public static FastAnnihilationPlugin getInstance() {
