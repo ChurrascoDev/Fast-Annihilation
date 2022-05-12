@@ -13,6 +13,7 @@ import com.github.imthenico.annihilation.api.util.Formatting;
 import com.github.imthenico.annihilation.api.util.GameValidation;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
 import com.github.imthenico.annihilation.api.util.TaskStateProvider;
+import com.github.imthenico.fastannihilation.service.ScoreboardServiceImpl;
 import me.yushust.message.MessageHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -114,6 +115,13 @@ public class GameTimerUpdater extends BukkitRunnable {
 
                 if (reason != null) {
                     Bukkit.getLogger().log(Level.WARNING, "Match cannot start, reason: " + reason);
+
+                    timer.restart();
+
+                    for (AnniPlayer player : players) {
+                        ScoreboardServiceImpl.WAITING_GAME_BOARD_MODEL
+                                .install(player.getComplexBoard());
+                    }
                 }
             }
 
@@ -126,6 +134,11 @@ public class GameTimerUpdater extends BukkitRunnable {
             if (!startedToCountdown) {
                 messageHandler
                         .send(players, "starting-game");
+
+                for (AnniPlayer player : players) {
+                    ScoreboardServiceImpl.STARTING_GAME_BOARD_MODEL
+                            .install(player.getComplexBoard());
+                }
             }
 
             int remainingTime = timer.getTotalTime() - timer.getElapsedTime();
@@ -139,6 +152,11 @@ public class GameTimerUpdater extends BukkitRunnable {
                         .send(players, "countdown-insufficient-players");
 
                 timer.restart();
+
+                for (AnniPlayer player : players) {
+                    ScoreboardServiceImpl.WAITING_GAME_BOARD_MODEL
+                            .install(player.getComplexBoard());
+                }
             }
         }
     }
