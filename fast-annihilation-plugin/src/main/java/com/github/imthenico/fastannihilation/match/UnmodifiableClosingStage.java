@@ -1,5 +1,7 @@
-package com.github.imthenico.annihilation.api.match;
+package com.github.imthenico.fastannihilation.match;
 
+import com.github.imthenico.annihilation.api.match.Match;
+import com.github.imthenico.annihilation.api.match.MatchClosingStage;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
 
 public class UnmodifiableClosingStage implements MatchClosingStage {
