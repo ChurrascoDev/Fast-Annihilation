@@ -3,7 +3,9 @@ package com.github.imthenico.annihilation.api.player;
 import com.github.imthenico.annihilation.api.game.Game;
 import com.github.imthenico.annihilation.api.game.GameRoom;
 import com.github.imthenico.annihilation.api.lang.LangHolder;
+import com.github.imthenico.annihilation.api.scoreboard.UnDeletableComplexBoard;
 import com.github.imthenico.annihilation.api.util.Formatting;
+import net.hexaway.board.abstraction.ComplexBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -15,21 +17,23 @@ import java.util.function.Supplier;
 public final class AnniPlayer implements LangHolder {
 
     private final UUID uuid;
+    private final ComplexBoard complexBoard;
     private final Supplier<Player> playerSupplier;
     private GameRoom playingRoom;
     private String lang;
 
-    public AnniPlayer(Player player) {
+    public AnniPlayer(Player player, ComplexBoard complexBoard) {
         this(() -> {
             UUID uuid = player.getUniqueId();
 
             return Bukkit.getPlayer(uuid);
-        });
+        }, complexBoard);
     }
 
-    public AnniPlayer(Supplier<Player> playerSupplier) {
+    public AnniPlayer(Supplier<Player> playerSupplier, ComplexBoard complexBoard) {
         this.playerSupplier = Objects.requireNonNull(playerSupplier);
         this.uuid = playerSupplier.get().getUniqueId();
+        this.complexBoard = new UnDeletableComplexBoard(Objects.requireNonNull(complexBoard));
     }
 
     @Override
@@ -55,6 +59,10 @@ public final class AnniPlayer implements LangHolder {
 
     public GameRoom getPlayingRoom() {
         return playingRoom;
+    }
+
+    public ComplexBoard getComplexBoard() {
+        return complexBoard;
     }
 
     public Game getPlayingGame() {

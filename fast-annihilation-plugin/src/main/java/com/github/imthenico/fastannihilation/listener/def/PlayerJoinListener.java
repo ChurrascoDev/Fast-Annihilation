@@ -3,6 +3,7 @@ package com.github.imthenico.fastannihilation.listener.def;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
 import com.github.imthenico.annihilation.api.service.ScoreboardService;
+import net.hexaway.board.abstraction.ComplexBoard;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +28,9 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         if (!playerRegistry.exists(player.getUniqueId())) {
-            playerRegistry.registerPlayer(new AnniPlayer(player));
+            ComplexBoard complexBoard = scoreboardService.displayBoard(player);
+
+            playerRegistry.registerPlayer(new AnniPlayer(player, complexBoard));
         }
     }
 
