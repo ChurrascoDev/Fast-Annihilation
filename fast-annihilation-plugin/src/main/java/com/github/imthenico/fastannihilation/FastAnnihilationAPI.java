@@ -7,6 +7,7 @@ import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
+import com.github.imthenico.annihilation.api.service.ScoreboardService;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 
 public class FastAnnihilationAPI implements AnnihilationAPI {
@@ -50,6 +51,11 @@ public class FastAnnihilationAPI implements AnnihilationAPI {
     @Override
     public ModelService modelService() {
         return fastAnnihilationPlugin.getModelService();
+    }
+
+    @Override
+    public ScoreboardService scoreboardService() {
+        return fastAnnihilationPlugin.getScoreboardService();
     }
 
     @Override

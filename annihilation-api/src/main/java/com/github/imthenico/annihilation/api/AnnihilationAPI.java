@@ -5,6 +5,7 @@ import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
+import com.github.imthenico.annihilation.api.service.ScoreboardService;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.inject.InjectionHandler;
 
@@ -19,6 +20,8 @@ public interface AnnihilationAPI {
     GameService gameService();
 
     ModelService modelService();
+
+    ScoreboardService scoreboardService();
 
     Scheduler getScheduler();
 
