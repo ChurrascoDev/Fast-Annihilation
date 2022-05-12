@@ -7,15 +7,13 @@ import com.github.imthenico.annihilation.api.lang.LangHolder;
 import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.team.MatchTeam;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class MatchPlayer implements LangHolder, WrappedEntity {
+public class MatchPlayer implements LangHolder {
 
     private final AnniPlayer rootPlayer;
     private final Match match;
@@ -140,11 +138,6 @@ public class MatchPlayer implements LangHolder, WrappedEntity {
     @Override
     public @Nullable String getLang() {
         return rootPlayer.getLang();
-    }
-
-    @Override
-    public Entity getBukkitEntity() {
-        return rootPlayer.getPlayer();
     }
 
 }
