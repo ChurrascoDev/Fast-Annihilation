@@ -19,8 +19,10 @@ public class CompositeFrameInterceptor implements FrameInterceptor {
             FrameInterceptor frameInterceptor = iterator.next();
             s = frameInterceptor.interceptLineFrame(s, player);
 
-            iterator.remove();
-            Objects.requireNonNull(s, "Interceptor returns null");
+            if (s == null) {
+                iterator.remove();
+                throw new NullPointerException("Interceptor returns null");
+            }
         }
 
         return s;
@@ -33,8 +35,10 @@ public class CompositeFrameInterceptor implements FrameInterceptor {
             FrameInterceptor frameInterceptor = iterator.next();
             s = frameInterceptor.interceptTitleFrame(s, player);
 
-            iterator.remove();
-            Objects.requireNonNull(s, "Interceptor returns null");
+            if (s == null) {
+                iterator.remove();
+                throw new NullPointerException("Interceptor returns null");
+            }
         }
 
         return s;
