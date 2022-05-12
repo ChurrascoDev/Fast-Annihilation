@@ -1,4 +1,4 @@
-package com.github.imthenico.annihilation.api.model.map.data;
+package com.github.imthenico.annihilation.api.model;
 
 import com.github.imthenico.gmlib.ModelData;
 

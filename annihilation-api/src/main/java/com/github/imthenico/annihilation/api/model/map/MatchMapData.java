@@ -1,7 +1,8 @@
-package com.github.imthenico.annihilation.api.model.map.data;
+package com.github.imthenico.annihilation.api.model.map;
 
 import com.github.imthenico.annihilation.api.model.LocationModel;
 import com.github.imthenico.annihilation.api.model.TeamDataModel;
+import com.github.imthenico.annihilation.api.model.EditableMapData;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 
 import java.util.*;
