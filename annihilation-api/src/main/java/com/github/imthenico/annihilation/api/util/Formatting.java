@@ -52,6 +52,14 @@ public class Formatting {
         return String.format(format, formattedX, formattedY, formattedZ, formattedYaw, formattedPitch);
     }
 
+    public static String formatSeconds(int totalSeconds, String format) {
+        int minutes = totalSeconds / 60;
+        int hours = minutes / 60;
+        int seconds = totalSeconds % 60;
+
+        return String.format(format, hours, minutes, seconds);
+    }
+
     public static String formatAxis(
             double x,
             double y,
