@@ -21,6 +21,10 @@ public class SimpleTimer {
         return elapsedTime;
     }
 
+    public int getRemainingTime() {
+        return totalTime - elapsedTime;
+    }
+
     public void elapse(int secondsToElapse, boolean restart) {
         if (secondsToElapse < 0)
             throw new IllegalStateException("secondsToElapse < 0");
@@ -30,7 +34,7 @@ public class SimpleTimer {
         boolean ended = elapsedTime >= totalTime;
 
         if (ended && restart) {
-            elapsedTime = totalTime;
+            elapsedTime = 0;
         }
     }
 
@@ -39,6 +43,6 @@ public class SimpleTimer {
     }
 
     public boolean isOver() {
-        return elapsedTime == totalTime;
+        return elapsedTime >= totalTime;
     }
 }
