@@ -10,6 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import static com.github.imthenico.fastannihilation.service.ScoreboardServiceImpl.*;
+
 public class PlayerJoinListener implements Listener {
 
     private final PlayerRegistry playerRegistry;
@@ -35,7 +37,12 @@ public class PlayerJoinListener implements Listener {
     }
 
     @EventHandler
-    public void registerScoreboardOnJoin(PlayerJoinEvent event) {
-        scoreboardService.displayBoard(event.getPlayer());
+    public void setScoreboardOnJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        AnniPlayer anniPlayer = playerRegistry.getPlayer(player.getUniqueId());
+
+        if (anniPlayer != null) {
+            LOBBY_BOARD_MODEL.install(anniPlayer.getComplexBoard());
+        }
     }
 }
