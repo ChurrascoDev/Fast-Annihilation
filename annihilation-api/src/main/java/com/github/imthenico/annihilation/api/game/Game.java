@@ -4,6 +4,7 @@ import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.match.authorization.AuthorizationResult;
 import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer;
 import com.github.imthenico.annihilation.api.model.map.MatchMapData;
+import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.gmlib.MapModel;
 
 public interface Game {
@@ -16,6 +17,8 @@ public interface Game {
     Match runningMatch();
 
     MatchAuthorizer getMatchAuthorizer();
+
+    MatchMapModelProvider getMatchMapModelProvider();
 
     PreMatchStage getPreparationStage();
 

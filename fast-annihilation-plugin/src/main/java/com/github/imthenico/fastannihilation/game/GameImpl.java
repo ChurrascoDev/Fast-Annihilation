@@ -123,7 +123,12 @@ public class GameImpl implements Game {
     public MatchAuthorizer getMatchAuthorizer() {
         return matchAuthorizer;
     }
-    
+
+    @Override
+    public MatchMapModelProvider getMatchMapModelProvider() {
+        return matchMapModelProvider;
+    }
+
     /**
      * This method is used to identify different types of
      * games with different game functions, characteristics, etc.
