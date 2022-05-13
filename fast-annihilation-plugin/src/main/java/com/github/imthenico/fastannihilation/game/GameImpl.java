@@ -91,19 +91,24 @@ public class GameImpl implements Game {
 
             MapModel<? extends MatchMapData> mapModel = matchMapModelProvider.getModel(votedMapName);
 
-            AuthorizationResult modelAuthorizationResult = matchAuthorizer.isEligibleForMap(mapModel);
-
-            if (modelAuthorizationResult.isAuthorized()) {
-                this.match = matchFactory.createMatch(this, matchExpansion, mapModel);
-                match.start();
-            }
-
-            return modelAuthorizationResult;
+            return startMatch(mapModel);
         }
 
         return result;
     }
-    
+
+    @Override
+    public AuthorizationResult startMatch(MapModel<? extends MatchMapData> suggestedModel) {
+        AuthorizationResult modelAuthorizationResult = matchAuthorizer.isEligibleForMap(suggestedModel);
+
+        if (modelAuthorizationResult.isAuthorized()) {
+            this.match = matchFactory.createMatch(this, matchExpansion, suggestedModel);
+            match.start();
+        }
+
+        return modelAuthorizationResult;
+    }
+
     @Override
     public Match runningMatch() {
         return match;
