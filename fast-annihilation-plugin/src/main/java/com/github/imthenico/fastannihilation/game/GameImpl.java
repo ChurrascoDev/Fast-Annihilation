@@ -8,6 +8,7 @@ import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer
 import com.github.imthenico.annihilation.api.match.expansion.MatchExpansion;
 import com.github.imthenico.annihilation.api.model.map.MatchMapData;
 import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
+import com.github.imthenico.annihilation.api.util.RandomElementPicker;
 import com.github.imthenico.annihilation.api.util.VoteCounter;
 import com.github.imthenico.annihilation.api.validator.MapCandidateValidator;
 import com.github.imthenico.gmlib.MapModel;
@@ -77,20 +78,30 @@ public class GameImpl implements Game {
 
             String votedMapName = voteCounter.mostVoted();
 
-            if (votedMapName == null && options.isSelectRandomMap()) {
-                List<String> candidates = voteCounter.getCandidates();
+            if (votedMapName == null) {
+                if (options.isSelectRandomMap()) {
+                    votedMapName = rules.getDefaultMap();
+                } else {
+                    List<String> candidates = voteCounter.getCandidates();
 
-                int i = ThreadLocalRandom.current().nextInt(candidates.size() - 1);
+                    votedMapName = RandomElementPicker.pickRandom(candidates);
+                }
+            }
 
-                votedMapName = candidates.get(i);
-            } else {
-                throw new RuntimeException("Unable to select a map name");
+            if (votedMapName == null) {
+                throw new RuntimeException("Unable to get a map candidate name");
             }
 
             MapModel<? extends MatchMapData> mapModel = matchMapModelProvider.getModel(votedMapName);
 
-            this.match = matchFactory.createMatch(this, matchExpansion, mapModel);
-            match.start();
+            AuthorizationResult modelAuthorizationResult = matchAuthorizer.isEligibleForMap(mapModel);
+
+            if (modelAuthorizationResult.isAuthorized()) {
+                this.match = matchFactory.createMatch(this, matchExpansion, mapModel);
+                match.start();
+            }
+
+            return modelAuthorizationResult;
         }
 
         return result;
