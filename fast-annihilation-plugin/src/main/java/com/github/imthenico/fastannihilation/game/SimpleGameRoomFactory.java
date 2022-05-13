@@ -75,8 +75,7 @@ public class SimpleGameRoomFactory implements GameFactory {
                 expansion.newAuthorizer(),
                 matchFactory,
                 expansion.getMatchExpansion(),
-                expansion.newMatchMapModelProvider(),
-                expansion.getMapCandidateValidator()
+                expansion.newMatchMapModelProvider()
         );
     }
 

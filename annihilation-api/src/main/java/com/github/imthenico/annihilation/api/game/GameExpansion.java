@@ -9,8 +9,6 @@ public interface GameExpansion {
 
     MatchExpansion getMatchExpansion();
 
-    MapCandidateValidator getMapCandidateValidator();
-
     Options newOptions();
 
     Rules newRules();

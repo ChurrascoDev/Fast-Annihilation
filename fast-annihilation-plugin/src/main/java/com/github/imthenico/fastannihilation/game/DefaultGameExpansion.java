@@ -10,7 +10,6 @@ import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer
 import com.github.imthenico.annihilation.api.model.ModelCache;
 import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.fastannihilation.strategy.DefaultMatchMapModelProvider;
-import com.github.imthenico.annihilation.api.validator.MapCandidateValidator;
 import me.yushust.message.MessageHandler;
 
 public class DefaultGameExpansion implements GameExpansion {
@@ -28,11 +27,6 @@ public class DefaultGameExpansion implements GameExpansion {
     @Override
     public MatchExpansion getMatchExpansion() {
         return matchExpansion;
-    }
-
-    @Override
-    public MapCandidateValidator getMapCandidateValidator() {
-        return MapCandidateValidator.defaultValidator();
     }
 
     @Override

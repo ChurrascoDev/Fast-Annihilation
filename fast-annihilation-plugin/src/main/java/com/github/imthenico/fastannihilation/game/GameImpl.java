@@ -10,12 +10,10 @@ import com.github.imthenico.annihilation.api.model.map.MatchMapData;
 import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.annihilation.api.util.RandomElementPicker;
 import com.github.imthenico.annihilation.api.util.VoteCounter;
-import com.github.imthenico.annihilation.api.validator.MapCandidateValidator;
 import com.github.imthenico.gmlib.MapModel;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class GameImpl implements Game {
 
@@ -35,8 +33,7 @@ public class GameImpl implements Game {
             MatchFactory matchFactory,
             MatchExpansion matchExpansion,
             MatchAuthorizer matchAuthorizer,
-            MatchMapModelProvider matchMapModelProvider,
-            MapCandidateValidator mapCandidateValidator
+            MatchMapModelProvider matchMapModelProvider
     ) {
         this.owner = owner;
         this.options = owner.getOptions().copy();
@@ -45,7 +42,7 @@ public class GameImpl implements Game {
         this.matchExpansion = matchExpansion;
         this.matchAuthorizer = matchAuthorizer;
         this.matchMapModelProvider = matchMapModelProvider;
-        this.preparationStage = new SimplePreMatchStage(rules.getTimeToStart(), this, matchMapModelProvider, mapCandidateValidator);
+        this.preparationStage = new SimplePreMatchStage(rules.getTimeToStart(), this, matchMapModelProvider);
     }
 
     @Override

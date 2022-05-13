@@ -10,7 +10,6 @@ import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
 import com.github.imthenico.annihilation.api.util.VoteCounter;
-import com.github.imthenico.annihilation.api.validator.MapCandidateValidator;
 import org.bukkit.Bukkit;
 
 import java.util.Collections;
@@ -28,11 +27,10 @@ public class SimplePreMatchStage implements PreMatchStage {
     public SimplePreMatchStage(
             int timeToStart,
             Game game,
-            MatchMapModelProvider matchMapModelProvider,
-            MapCandidateValidator candidateValidator
+            MatchMapModelProvider matchMapModelProvider
     ) {
         this.game = game;
-        this.votes = new MapVoteCounter<>(matchMapModelProvider, candidateValidator, game);
+        this.votes = new MapVoteCounter<>(matchMapModelProvider, game);
         this.teamSelection = new HashMap<>();
         this.timer = new SimpleTimer(timeToStart);
     }

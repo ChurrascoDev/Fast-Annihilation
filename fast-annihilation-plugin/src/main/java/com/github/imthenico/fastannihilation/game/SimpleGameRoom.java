@@ -14,7 +14,6 @@ import com.github.imthenico.annihilation.api.match.MatchFactory;
 import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
-import com.github.imthenico.annihilation.api.validator.MapCandidateValidator;
 import com.github.imthenico.annihilation.api.world.LocationReference;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,7 +37,6 @@ public class SimpleGameRoom implements GameRoom {
     private final MatchFactory matchFactory;
     private final MatchExpansion matchExpansion;
     private final MatchMapModelProvider matchMapModelProvider;
-    private final MapCandidateValidator mapCandidateValidator;
 
     private Game game;
     private boolean enabled;
@@ -53,8 +51,7 @@ public class SimpleGameRoom implements GameRoom {
             MatchAuthorizer matchAuthorizer,
             MatchFactory matchFactory,
             MatchExpansion matchExpansion,
-            MatchMapModelProvider matchMapModelProvider,
-            MapCandidateValidator mapCandidateValidator
+            MatchMapModelProvider matchMapModelProvider
     ) {
         this.matchExpansion = matchExpansion;
         this.players = new HashSet<>();
@@ -67,7 +64,6 @@ public class SimpleGameRoom implements GameRoom {
         this.matchAuthorizer = matchAuthorizer;
         this.matchFactory = matchFactory;
         this.matchMapModelProvider = matchMapModelProvider;
-        this.mapCandidateValidator = mapCandidateValidator;
 
         initLogic();
     }
@@ -228,8 +224,7 @@ public class SimpleGameRoom implements GameRoom {
                 matchFactory,
                 matchExpansion,
                 matchAuthorizer,
-                matchMapModelProvider,
-                mapCandidateValidator
+                matchMapModelProvider
         );
     }
 }
