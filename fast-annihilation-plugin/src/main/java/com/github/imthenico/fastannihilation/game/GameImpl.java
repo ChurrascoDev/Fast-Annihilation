@@ -13,6 +13,7 @@ import com.github.imthenico.annihilation.api.util.VoteCounter;
 import com.github.imthenico.gmlib.MapModel;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class GameImpl implements Game {
@@ -99,6 +100,8 @@ public class GameImpl implements Game {
 
     @Override
     public AuthorizationResult startMatch(MapModel<? extends MatchMapData> suggestedModel) {
+        Objects.requireNonNull(suggestedModel, "the suggested model is null");
+
         AuthorizationResult modelAuthorizationResult = matchAuthorizer.isEligibleForMap(suggestedModel);
 
         if (modelAuthorizationResult.isAuthorized()) {
