@@ -7,6 +7,7 @@ import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.annihilation.api.validator.MapCandidateValidator;
 import com.github.imthenico.gmlib.MapModel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class DefaultMatchMapModelProvider implements MatchMapModelProvider {
     }
 
     @Override
-    public @NotNull MapModel<MatchMapData> getModel(String name) {
+    public @Nullable MapModel<MatchMapData> getModel(String name) {
         return modelCache.getModel(name);
     }
 
