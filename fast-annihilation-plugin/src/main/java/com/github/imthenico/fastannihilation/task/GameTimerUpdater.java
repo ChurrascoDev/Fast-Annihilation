@@ -36,9 +36,6 @@ public class GameTimerUpdater extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (!TaskStateProvider.isRunning(this))
-            return;
-
         for (GameRoom room : gameInstances) {
             if (!room.isEnabled()) {
                 continue;
@@ -56,9 +53,6 @@ public class GameTimerUpdater extends BukkitRunnable {
     }
 
     private void handleMatchTimer(Match match) {
-        if (!TaskStateProvider.isRunning(this))
-            return;
-
         if (match.finalized()) {
             cancel();
             return;
@@ -141,7 +135,7 @@ public class GameTimerUpdater extends BukkitRunnable {
                 }
             }
 
-            int remainingTime = timer.getTotalTime() - timer.getElapsedTime();
+            int remainingTime = timer.getRemainingTime();
             messageHandler
                     .send(players, "game-start-in-" + remainingTime);
 
