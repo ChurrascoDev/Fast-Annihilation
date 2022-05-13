@@ -33,7 +33,7 @@ public class SelectTeamCommand implements CommandClass {
             return true;
         }
 
-        TeamColor teamColor = colorMap.get(colorName);
+        TeamColor teamColor = colorMap.get(colorName.toLowerCase(Locale.ROOT));
 
         if (teamColor == null) {
             anniPlayer.sendMessage("&cInvalid team name", true);
