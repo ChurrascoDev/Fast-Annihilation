@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleModelCache implements ModelCache {
@@ -29,16 +30,22 @@ public class SimpleModelCache implements ModelCache {
 
     @Override
     public <T extends ModelData> MapModel<?> replaceModel(MapModel<T> mapModel) {
-        return models.remove(mapModel.getName());
+        Objects.requireNonNull(mapModel, "model is null");
+
+        return models.replace(mapModel.getName(), mapModel);
     }
 
     @Override
     public void removeModel(String name) {
+        Objects.requireNonNull(name, "name is null");
+
         models.remove(name);
     }
 
     @Override
     public <T extends ModelData> MapModel<T> getModel(String name) {
+        Objects.requireNonNull(name, "name is null");
+
         return SafeCast.of(models.get(name)).orDefault(() -> null);
     }
 
@@ -49,6 +56,9 @@ public class SimpleModelCache implements ModelCache {
 
     @Override
     public boolean has(String name) {
+        if (name == null)
+            return false;
+
         return models.containsKey(name);
     }
 
