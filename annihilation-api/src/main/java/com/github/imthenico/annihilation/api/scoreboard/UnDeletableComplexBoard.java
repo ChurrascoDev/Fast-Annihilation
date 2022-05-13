@@ -48,6 +48,11 @@ public class UnDeletableComplexBoard implements ComplexBoard {
     }
 
     @Override
+    public void clearComplexLines() {
+        delegate.clearComplexLines();
+    }
+
+    @Override
     public String getName() {
         return delegate.getName();
     }
@@ -114,11 +119,11 @@ public class UnDeletableComplexBoard implements ComplexBoard {
 
     @Override
     public void reShow() {
-
+        delegate.reShow();
     }
 
     @Override
     public void tick() {
-
+        delegate.tick();
     }
 }
