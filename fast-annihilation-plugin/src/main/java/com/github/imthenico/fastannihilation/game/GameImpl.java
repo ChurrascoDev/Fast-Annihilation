@@ -6,6 +6,7 @@ import com.github.imthenico.annihilation.api.match.MatchFactory;
 import com.github.imthenico.annihilation.api.match.authorization.AuthorizationResult;
 import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer;
 import com.github.imthenico.annihilation.api.match.expansion.MatchExpansion;
+import com.github.imthenico.annihilation.api.message.MessagePath;
 import com.github.imthenico.annihilation.api.model.map.MatchMapData;
 import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.annihilation.api.util.RandomElementPicker;
@@ -87,7 +88,11 @@ public class GameImpl implements Game {
             }
 
             if (votedMapName == null) {
-                throw new RuntimeException("Unable to get a map candidate name");
+                return AuthorizationResult.of(
+                        false,
+                        MessagePath.path("no-map-candidate-found"),
+                        "no_candidate"
+                );
             }
 
             MapModel<? extends MatchMapData> mapModel = matchMapModelProvider.getModel(votedMapName);

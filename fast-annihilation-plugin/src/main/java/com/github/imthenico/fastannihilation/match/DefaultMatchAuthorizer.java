@@ -15,6 +15,8 @@ import static com.github.imthenico.annihilation.api.util.GameValidation.*;
 
 public class DefaultMatchAuthorizer implements MatchAuthorizer {
 
+    private final static String SUCCESS_NAMESPACE = "passed_checks";
+
     @Override
     public AuthorizationResult canStart(Game game) {
         Rules rules = game.room().getRules();
@@ -29,15 +31,15 @@ public class DefaultMatchAuthorizer implements MatchAuthorizer {
         if (candidate == null && rules.getDefaultMap() == null && !game.getOptions().isSelectRandomMap()) {
             messagePath = "match-cannot-start-no-map-voted";
             authorized = false;
-            reason = "No map voted";
+            reason = "no_map_voted";
         } else if (!balancedTeams(game)) {
             messagePath = "match-cannot-start-unbalanced-teams";
             authorized = false;
-            reason = "Unbalanced Teams";
+            reason = "unbalanced_Teams";
         } else {
             messagePath = "match-can-start";
             authorized = true;
-            reason = "passed checks";
+            reason = SUCCESS_NAMESPACE;
         }
 
         return AuthorizationResult.of(authorized, path(messagePath), reason);
@@ -46,8 +48,8 @@ public class DefaultMatchAuthorizer implements MatchAuthorizer {
     @Override
     public AuthorizationResult isEligibleForMap(MapModel<? extends MatchMapData> model) {
         if (!isDataCorrectlyConfigured(model.getData()))
-            return AuthorizationResult.of(false, path("invalid-map-for-match"), "");
+            return AuthorizationResult.of(false, path("invalid-map-for-match"), "not_configured_data");
 
-        return AuthorizationResult.of(true, path("valid-map-for-match"), "");
+        return AuthorizationResult.of(true, path("valid-map-for-match"), SUCCESS_NAMESPACE);
     }
 }
