@@ -21,7 +21,7 @@ public class DefaultGameExpansion implements GameExpansion {
 
     public DefaultGameExpansion(MessageHandler messageHandler, ModelCache modelCache) {
         this.matchExpansion = new DefaultMatchExpansion(messageHandler);
-        this.matchAuthorizer = new DefaultMatchAuthorizer(modelCache);
+        this.matchAuthorizer = new DefaultMatchAuthorizer();
         this.matchMapModelProvider = new DefaultMatchMapModelProvider(modelCache);
     }
 
