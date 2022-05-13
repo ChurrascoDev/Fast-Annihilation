@@ -13,7 +13,7 @@ import me.fixeddev.commandflow.bukkit.annotation.Sender;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-@Command(names = {"game", "gamemanager"})
+@Command(names = {"gm", "gamemanager"})
 public class GameInstanceManagerCommand implements CommandClass {
 
     private final GameManager gameManager;
