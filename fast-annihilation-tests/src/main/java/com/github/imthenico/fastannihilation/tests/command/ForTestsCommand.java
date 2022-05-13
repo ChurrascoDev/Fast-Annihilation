@@ -26,7 +26,7 @@ public class ForTestsCommand implements CommandClass {
         for (TeamColor value : TeamColor.values()) {
             consumeAll(value, (npcPlayer) -> {
                 npcPlayer.performCommand("game join " + roomName);
-                npcPlayer.performCommand("team join " + value.name());
+                npcPlayer.performCommand("team " + value.name());
             });
         }
 
