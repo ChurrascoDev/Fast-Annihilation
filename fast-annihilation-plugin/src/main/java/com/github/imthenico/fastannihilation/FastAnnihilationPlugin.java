@@ -6,20 +6,21 @@ import com.github.imthenico.annihilation.api.config.AnniConfig;
 import com.github.imthenico.annihilation.api.config.Configuration;
 import com.github.imthenico.annihilation.api.db.UserCredential;
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
-import com.github.imthenico.annihilation.api.lang.AnniPlayerAdapter;
-import com.github.imthenico.annihilation.api.lang.MatchPlayerAdapter;
-import com.github.imthenico.annihilation.api.lang.PlayerLinguist;
-import com.github.imthenico.annihilation.api.lang.SimpleAnniMessageSender;
+import com.github.imthenico.fastannihilation.lang.AnniPlayerAdapter;
+import com.github.imthenico.fastannihilation.lang.MatchPlayerAdapter;
+import com.github.imthenico.fastannihilation.lang.PlayerLinguist;
+import com.github.imthenico.fastannihilation.lang.SimpleAnniMessageSender;
 import com.github.imthenico.fastannihilation.listener.def.DefaultsListenerModule;
+import com.github.imthenico.fastannihilation.listener.def.game.GameListenerModule;
 import com.github.imthenico.fastannihilation.listener.def.match.MatchListenerModule;
 import com.github.imthenico.annihilation.api.model.lobby.GameLobbyData;
-import com.github.imthenico.annihilation.api.model.map.data.MatchMapData;
+import com.github.imthenico.annihilation.api.model.map.MatchMapData;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.player.PlayerRegistry;
 import com.github.imthenico.annihilation.api.registry.ModelType;
 import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
-import com.github.imthenico.annihilation.api.scheduler.SimpleBukkitScheduler;
+import com.github.imthenico.fastannihilation.scheduler.SimpleBukkitScheduler;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.service.ScoreboardService;
@@ -54,7 +55,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,6 +63,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class FastAnnihilationPlugin extends JavaPlugin {
 
@@ -280,21 +282,22 @@ public class FastAnnihilationPlugin extends JavaPlugin {
 
         gameService.start();
 
-        scoreboardService = new ScoreboardServiceImpl(playerRegistry);
+        scoreboardService = new ScoreboardServiceImpl();
 
         scoreboardService.start();
     }
 
     private void registerListeners() {
-        PluginManager pluginManager = Bukkit.getPluginManager();
+        Consumer<Listener> consumer = listener -> Bukkit.getPluginManager().registerEvents(listener, FastAnnihilationPlugin.this);
 
         new DefaultsListenerModule(modelService.getModelSetupManager(), playerRegistry, gameService.getLobbySpawnReference(), scoreboardService)
-                .getListeners()
-                .forEach(listener -> pluginManager.registerEvents(listener, this));
+                .getListeners().forEach(consumer);
 
         new MatchListenerModule("anni-match", utilityPack.getMessageHandler(), scheduler, playerRegistry)
-                .getListeners()
-                .forEach(listener -> pluginManager.registerEvents(listener, this));
+                .getListeners().forEach(consumer);
+
+        new GameListenerModule()
+                .getListeners().forEach(consumer);
     }
 
     private void registerPAPIExpansions() {
