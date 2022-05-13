@@ -42,9 +42,10 @@ public class ForTestsAnniPlugin extends FastAnnihilationPlugin {
 
                 npc.addRunnable(() -> checkNPCSpawnStatus(npc));
 
+                Player player = (Player) npc.getEntity();
                 getAPI()
                         .playerCache()
-                        .registerPlayer(new AnniPlayer(() -> (Player) npc.getEntity()));
+                        .registerPlayer(new AnniPlayer(() -> player, new FakeComplexBoard()));
             }
         }
 
