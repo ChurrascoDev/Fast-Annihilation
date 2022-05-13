@@ -37,7 +37,7 @@ public class GameExpansion extends PlaceholderExpansion {
             case "time": {
                 SimpleTimer timer = preMatchStage.getCountdownToStart();
 
-                return Formatting.formatSeconds(timer.getElapsedTime(), "%s:%s:%s");
+                return Formatting.formatSeconds(timer.getRemainingTime(), "%s:%s:%s");
             }
             case "id": {
                 return game.room().id();
