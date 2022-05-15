@@ -1,21 +1,22 @@
 package com.github.imthenico.annihilation.api.event.match;
 
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
+import com.github.imthenico.annihilation.api.model.map.MatchMap;
 import com.github.imthenico.annihilation.api.model.map.Nexus;
-import com.github.imthenico.annihilation.api.match.Match;
-import org.bukkit.event.HandlerList;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class NexusEvent extends MatchEvent {
+public abstract class NexusEvent extends Event {
 
     private final Nexus nexus;
+    private final MatchMap matchMap;
     private final MatchPlayer externAgent;
 
-    public NexusEvent(Match match, Nexus nexus, MatchPlayer externAgent) {
-        super(match);
+    public NexusEvent(MatchMap matchMap, Nexus nexus, MatchPlayer externAgent) {
         this.nexus = nexus;
         this.externAgent = externAgent;
+        this.matchMap = matchMap;
     }
 
     public @NotNull Nexus getNexus() {
@@ -26,8 +27,7 @@ public abstract class NexusEvent extends MatchEvent {
         return externAgent;
     }
 
-    @Override
-    public HandlerList getHandlers() {
-        return null;
+    public MatchMap getMatchMap() {
+        return matchMap;
     }
 }

@@ -3,7 +3,6 @@ package com.github.imthenico.annihilation.api.model.map;
 import com.github.imthenico.annihilation.api.entity.MatchPlayer;
 import com.github.imthenico.annihilation.api.event.match.NexusDamageEvent;
 import com.github.imthenico.annihilation.api.event.match.NexusDestroyEvent;
-import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,20 +13,20 @@ public class SimpleNexus implements Nexus {
 
     private int health;
     private final TeamColor teamColor;
-    private final Match match;
+    private final MatchMap matchMap;
     private final Location location;
 
     public SimpleNexus(
             int health,
             TeamColor teamColor,
             Location location,
-            Match match
+            MatchMap matchMap
     ) {
         if (health <= 0)
             throw new IllegalArgumentException("health <= 0");
 
         this.health = health;
-        this.match = Objects.requireNonNull(match);
+        this.matchMap = Objects.requireNonNull(matchMap);
         this.teamColor = Objects.requireNonNull(teamColor);
         this.location = Objects.requireNonNull(location);
     }
@@ -54,9 +53,9 @@ public class SimpleNexus implements Nexus {
 
         if (health < 0) {
             health = 0;
-            nexusEvent = new NexusDestroyEvent(match, this, externalAgent, damage);
+            nexusEvent = new NexusDestroyEvent(matchMap, this, externalAgent, damage);
         } else {
-            nexusEvent = new NexusDamageEvent(match, this, externalAgent, damage);
+            nexusEvent = new NexusDamageEvent(matchMap, this, externalAgent, damage);
         }
 
         Bukkit.getPluginManager().callEvent(nexusEvent);
