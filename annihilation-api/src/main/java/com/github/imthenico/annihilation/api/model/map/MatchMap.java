@@ -1,7 +1,6 @@
 package com.github.imthenico.annihilation.api.model.map;
 
 import com.github.imthenico.annihilation.api.data.DataHolder;
-import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.model.LocationModel;
 import com.github.imthenico.annihilation.api.model.NexusModel;
 import com.github.imthenico.annihilation.api.model.TeamDataModel;
@@ -21,7 +20,6 @@ import java.util.*;
 public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProperties {
 
     private final String name;
-    private final Match match;
     private final Map<TeamColor, MatchTeam> teamMap;
     private final Map<String, Object> data;
 
@@ -39,14 +37,12 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
     public MatchMap(
             @Skip MatchMapData matchMapData,
             @Skip AWorld mainWorld,
-            @Skip WorldContainer worldContainer,
-            @Skip String name,
-            @Skip Match match
+            @Skip WorldContainer<AWorld> worldContainer,
+            @Skip String name
     ) {
         super(matchMapData, mainWorld, worldContainer, name);
 
         this.name = name;
-        this.match = match;
         this.teamMap = new HashMap<>();
 
         for (TeamColor value : TeamColor.values()) {
@@ -61,12 +57,12 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
         this.spectatorPositions = new HashMap<>();
         this.timePerPhase = matchMapData.getTimePerPhase();
         this.phasesDuration = matchMapData.getPhasesDuration();
-        WorldContainer allWorlds = allWorlds();
+        WorldContainer<AWorld> allWorlds = allWorlds();
 
         this.furnaces = transformLocations(matchMapData.getFurnaces(), allWorlds);
 
         matchMapData.getTeamData().forEach((color, teamDataModel) -> {
-            nexusMap.put(color, getNexus(match, color, teamDataModel, allWorlds));
+            nexusMap.put(color, getNexus(color, teamDataModel, allWorlds));
 
             teamSpawns.put(color, transformLocations(teamDataModel.getSpawns(), allWorlds));
             spectatorPositions.put(color, transformLocations(teamDataModel.getSpectatorPositions(), allWorlds));
@@ -131,11 +127,7 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
         return teamMap.get(color);
     }
 
-    public Match getMatch() {
-        return match;
-    }
-
-    private static List<Location> transformLocations(List<LocationModel> locationModels, WorldContainer worldContainer) {
+    private static List<Location> transformLocations(List<LocationModel> locationModels, WorldContainer<AWorld> worldContainer) {
         List<Location> locations = new ArrayList<>(locationModels.size());
 
         for (LocationModel locationModel : locationModels) {
@@ -145,7 +137,7 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
         return locations;
     }
 
-    private static Nexus getNexus(Match match, TeamColor color, TeamDataModel teamDataModel, WorldContainer worldContainer) {
+    private Nexus getNexus(TeamColor color, TeamDataModel teamDataModel, WorldContainer<AWorld> worldContainer) {
         NexusModel nexusModel = teamDataModel.nexus();
 
         if (nexusModel == null)
@@ -155,7 +147,7 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
                 nexusModel.totalHealth,
                 color,
                 nexusModel.getLocation().toBukkit(worldContainer),
-                match
+                this
         );
     }
 }
