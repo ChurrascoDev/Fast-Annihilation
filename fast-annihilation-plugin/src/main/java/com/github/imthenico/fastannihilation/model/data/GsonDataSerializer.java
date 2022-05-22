@@ -1,7 +1,7 @@
 package com.github.imthenico.fastannihilation.model.data;
 
-import com.github.imthenico.gmlib.DataSerializer;
 import com.github.imthenico.gmlib.ModelData;
+import com.github.imthenico.gmlib.handler.DataSerializer;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
