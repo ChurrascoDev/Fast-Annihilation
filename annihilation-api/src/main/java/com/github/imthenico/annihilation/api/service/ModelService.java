@@ -3,7 +3,7 @@ package com.github.imthenico.annihilation.api.service;
 import com.github.imthenico.annihilation.api.editor.ModelSetupManager;
 import com.github.imthenico.annihilation.api.model.MapModelStorage;
 import com.github.imthenico.gmlib.GameMapHandler;
-import com.github.imthenico.gmlib.pool.WorldPool;
+import com.github.imthenico.gmlib.pool.TemplatePool;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -17,5 +17,5 @@ public interface ModelService extends Service {
 
     ModelSetupManager getModelSetupManager();
 
-    WorldPool getWorldPool();
+    TemplatePool getTemplatePool();
 }
