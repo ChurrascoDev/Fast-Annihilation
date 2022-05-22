@@ -133,7 +133,7 @@ public class LocationModel implements JsonSerializable {
         return jsonTreeBuilder.build();
     }
 
-    public Location toBukkit(WorldContainer worldContainer, String worldName) {
+    public Location toBukkit(WorldContainer<?> worldContainer, String worldName) {
         Objects.requireNonNull(worldName, "worldName is null");
 
         AWorld aWorld = worldContainer.getByName(worldName);
@@ -144,7 +144,7 @@ public class LocationModel implements JsonSerializable {
         return toBukkit((World) aWorld.handle());
     }
 
-    public Location toBukkit(WorldContainer worldContainer) {
+    public Location toBukkit(WorldContainer<?> worldContainer) {
         return toBukkit(worldContainer, worldName);
     }
 
