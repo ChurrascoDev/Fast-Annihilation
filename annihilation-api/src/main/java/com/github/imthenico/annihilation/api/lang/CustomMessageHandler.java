@@ -24,7 +24,7 @@ public class CustomMessageHandler extends AbstractDelegatingMessageProvider {
             ReplacePack replacePack,
             Object... objects
     ) {
-        dispatch(objects, path, mode, null, replacePack);
+        dispatch(entityOrEntities, path, mode, null, replacePack);
     }
 
     @SuppressWarnings("rawtypes, unchecked")
@@ -71,6 +71,6 @@ public class CustomMessageHandler extends AbstractDelegatingMessageProvider {
             MessagePath messagePath,
             ReplacePack replacePack
     ) {
-        dispatch(entityOrEntities, messagePath.getMessagePath(), mode, messagePath.getDefaultMessage(), replacePack);
+        dispatch(entityOrEntities, mode, messagePath.getMessagePath(), messagePath.getDefaultMessage(), replacePack);
     }
 }
