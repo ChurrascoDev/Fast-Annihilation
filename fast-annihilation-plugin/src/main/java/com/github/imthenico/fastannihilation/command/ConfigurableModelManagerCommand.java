@@ -12,9 +12,9 @@ import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.gmlib.MapModel;
 import com.github.imthenico.gmlib.ModelData;
 import com.github.imthenico.gmlib.exception.NoWorldFoundException;
-import com.github.imthenico.gmlib.pool.WorldPool;
+import com.github.imthenico.gmlib.pool.TemplatePool;
 import com.github.imthenico.gmlib.world.AWorld;
-import com.github.imthenico.gmlib.world.WorldPack;
+import com.github.imthenico.gmlib.world.TemplatePack;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.bukkit.annotation.Sender;
@@ -33,13 +33,13 @@ public class ConfigurableModelManagerCommand implements CommandClass {
     private final ModelTypeRegistry modelTypeRegistry;
     private final MapModelStorage mapModelStorage;
     private final ModelCache modelCache;
-    private final WorldPool templatePool;
+    private final TemplatePool templatePool;
     private final ModelSetupManager modelSetupManager;
 
     public ConfigurableModelManagerCommand(
             ModelTypeRegistry modelTypeRegistry,
             MapModelStorage mapModelStorage,
-            WorldPool templatePool,
+            TemplatePool templatePool,
             ModelSetupManager modelSetupManager
     ) {
         this.modelTypeRegistry = modelTypeRegistry;
@@ -69,7 +69,7 @@ public class ConfigurableModelManagerCommand implements CommandClass {
         }
 
         try {
-            WorldPack worldPack = WorldPack.fromPool(
+            TemplatePack worldPack = TemplatePack.fromPool(
                     templatePool,
                     templateName,
                     Collections.emptyList(),
@@ -193,12 +193,12 @@ public class ConfigurableModelManagerCommand implements CommandClass {
 
         List<String> additionalWorldNames = new ArrayList<>();
 
-        model.getAdditionalWorlds().forEach(aWorld -> additionalWorldNames.add(aWorld.getName()));
+        model.getAdditionalWorlds().forEach(aWorld -> additionalWorldNames.add(aWorld.getHandleName()));
         return String.format(
                 format,
                 model.getName(),
                 modelTypeName,
-                model.getMainWorld().getName(),
+                model.getMainWorld().getHandleName(),
                 additionalWorldNames
         );
     }
