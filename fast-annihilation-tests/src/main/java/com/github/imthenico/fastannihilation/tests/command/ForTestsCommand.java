@@ -25,7 +25,7 @@ public class ForTestsCommand implements CommandClass {
     public boolean joinNPCS(@Sender Player player, String roomName) {
         for (TeamColor value : TeamColor.values()) {
             consumeAll(value, (npcPlayer) -> {
-                npcPlayer.performCommand("game join " + roomName);
+                npcPlayer.performCommand("gm join " + roomName);
                 npcPlayer.performCommand("team " + value.name());
             });
         }
