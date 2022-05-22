@@ -29,9 +29,9 @@ public class PlayerJoinListener implements Listener {
     public void registerPlayerModelOnJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!playerRegistry.exists(player.getUniqueId())) {
-            ComplexBoard complexBoard = scoreboardService.displayBoard(player);
+        ComplexBoard complexBoard = scoreboardService.displayBoard(player);
 
+        if (!playerRegistry.exists(player.getUniqueId())) {
             playerRegistry.registerPlayer(new AnniPlayer(player, complexBoard));
         }
     }
