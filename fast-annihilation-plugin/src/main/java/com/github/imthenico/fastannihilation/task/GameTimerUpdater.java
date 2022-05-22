@@ -8,13 +8,13 @@ import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.match.MatchClosingStage;
 import com.github.imthenico.annihilation.api.match.authorization.AuthorizationResult;
 import com.github.imthenico.annihilation.api.message.MessagePath;
+import com.github.imthenico.annihilation.api.namespace.Namespace;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
-import com.github.imthenico.annihilation.api.util.Formatting;
 import com.github.imthenico.annihilation.api.util.GameValidation;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
-import com.github.imthenico.annihilation.api.util.TaskStateProvider;
+import com.github.imthenico.annihilation.api.lang.CustomMessageHandler;
 import com.github.imthenico.fastannihilation.service.ScoreboardServiceImpl;
-import me.yushust.message.MessageHandler;
+import me.yushust.message.util.ReplacePack;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -24,11 +24,11 @@ import java.util.logging.Level;
 public class GameTimerUpdater extends BukkitRunnable {
 
     private final GameManager gameInstances;
-    private final MessageHandler messageHandler;
+    private final CustomMessageHandler messageHandler;
 
     public GameTimerUpdater(
             GameManager gameInstances,
-            MessageHandler messageHandler
+            CustomMessageHandler messageHandler
     ) {
         this.gameInstances = gameInstances;
         this.messageHandler = messageHandler;
@@ -92,23 +92,12 @@ public class GameTimerUpdater extends BukkitRunnable {
                 MessagePath path = authorizationResult.getReasonMessage();
                 String messagePath = path.getMessagePath();
 
-                if (messagePath != null) {
-                    messageHandler.sendReplacing(
-                            players,
-                            messagePath
-                    );
-                } else {
-                    for (AnniPlayer player : players) {
-                        player.getPlayer().sendMessage(
-                                Formatting.colorize(path.getDefaultMessage())
-                        );
-                    }
-                }
+                messageHandler.dispatch(players, "default", messagePath, ReplacePack.EMPTY);
 
-                String reason = authorizationResult.getReason();
+                Namespace reason = authorizationResult.getReason();
 
                 if (reason != null) {
-                    Bukkit.getLogger().log(Level.WARNING, "Match cannot start, reason: " + reason);
+                    Bukkit.getLogger().log(Level.WARNING, "Match cannot start, reason: " + reason.get());
 
                     timer.restart();
 
@@ -117,6 +106,8 @@ public class GameTimerUpdater extends BukkitRunnable {
                                 .install(player.getComplexBoard());
                     }
                 }
+            } else {
+                messageHandler.send(players, "on-match-start");
             }
 
             return;
