@@ -8,21 +8,15 @@ public class PlayerLeaveTeamEvent extends PlayerMatchEvent {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final MatchTeam newTeam;
-    private final MatchTeam oldTeam;
+    private final MatchTeam team;
 
-    public PlayerLeaveTeamEvent(MatchPlayer matchPlayer, MatchTeam newTeam, MatchTeam oldTeam) {
+    public PlayerLeaveTeamEvent(MatchPlayer matchPlayer, MatchTeam team) {
         super(matchPlayer);
-        this.newTeam = newTeam;
-        this.oldTeam = oldTeam;
+        this.team = team;
     }
 
-    public MatchTeam getNewTeam() {
-        return newTeam;
-    }
-
-    public MatchTeam getOldTeam() {
-        return oldTeam;
+    public MatchTeam getTeam() {
+        return team;
     }
 
     @Override
