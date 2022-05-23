@@ -11,15 +11,12 @@ import com.github.imthenico.annihilation.api.util.SafeCast;
 import com.github.imthenico.gmlib.GameMap;
 import com.github.imthenico.gmlib.world.AWorld;
 import com.github.imthenico.gmlib.world.WorldContainer;
-import com.github.imthenico.inject.annotation.InjectAll;
-import com.github.imthenico.inject.annotation.Skip;
 import org.bukkit.Location;
 
 import java.util.*;
 
 public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProperties {
 
-    private final String name;
     private final Map<TeamColor, MatchTeam> teamMap;
     private final Map<String, Object> data;
 
@@ -30,19 +27,9 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
     private final Map<Integer, Integer> phasesDuration;
     private final List<Location> furnaces;
 
-    @InjectAll(
-            from = MatchMapData.class,
-            valuesToExtract = {}
-    )
     public MatchMap(
-            @Skip MatchMapData matchMapData,
-            @Skip AWorld mainWorld,
-            @Skip WorldContainer<AWorld> worldContainer,
-            @Skip String name
+            WorldContainer<AWorld> allWorlds, MatchMapData matchMapData
     ) {
-        super(matchMapData, mainWorld, worldContainer, name);
-
-        this.name = name;
         this.teamMap = new HashMap<>();
 
         for (TeamColor value : TeamColor.values()) {
@@ -57,7 +44,6 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
         this.spectatorPositions = new HashMap<>();
         this.timePerPhase = matchMapData.getTimePerPhase();
         this.phasesDuration = matchMapData.getPhasesDuration();
-        WorldContainer<AWorld> allWorlds = allWorlds();
 
         this.furnaces = transformLocations(matchMapData.getFurnaces(), allWorlds);
 
@@ -67,10 +53,6 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
             teamSpawns.put(color, transformLocations(teamDataModel.getSpawns(), allWorlds));
             spectatorPositions.put(color, transformLocations(teamDataModel.getSpectatorPositions(), allWorlds));
         });
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override
