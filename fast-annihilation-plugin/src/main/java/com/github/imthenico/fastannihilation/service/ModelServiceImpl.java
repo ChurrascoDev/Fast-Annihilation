@@ -8,9 +8,9 @@ import com.github.imthenico.fastannihilation.model.MapModelStorageImpl;
 import com.github.imthenico.annihilation.api.model.ModelCache;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.util.CompletableFutures;
-import com.github.imthenico.gmlib.DataManipulation;
 import com.github.imthenico.gmlib.GameMapHandler;
-import com.github.imthenico.gmlib.pool.WorldPool;
+import com.github.imthenico.gmlib.handler.HandlerRegistry;
+import com.github.imthenico.gmlib.pool.TemplatePool;
 import com.github.imthenico.repository.AbstractRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -28,26 +28,26 @@ public class ModelServiceImpl implements ModelService {
     private final MapModelStorage modelStorageService;
     private final GameMapHandler gameMapHandler;
     private final ModelSetupManager modelSetupManager;
-    private final WorldPool worldPool;
+    private final TemplatePool templatePool;
 
     public ModelServiceImpl(
             AbstractRepository<JsonObject> modelDataRepository,
             Gson gson,
-            WorldPool worldPool
+            TemplatePool templatePool
     ) {
-        DataManipulation dataManipulation = DataManipulation.builder()
-                .module(new AnniModule(gson))
+        HandlerRegistry dataManipulation = HandlerRegistry.builder()
+                .consume(new AnniModule(gson))
                 .build();
 
         gameMapHandler = GameMapHandler.create(
-                worldPool,
+                templatePool,
                 dataManipulation,
                 gson
         );
 
         this.modelStorageService = new MapModelStorageImpl(modelDataRepository, gameMapHandler);
         this.modelSetupManager = new SimpleAbstractSetupManager();
-        this.worldPool = worldPool;
+        this.templatePool = templatePool;
     }
 
     @Override
@@ -96,8 +96,8 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public WorldPool getWorldPool() {
-        return worldPool;
+    public TemplatePool getTemplatePool() {
+        return templatePool;
     }
 
     @Override
