@@ -20,6 +20,7 @@ import com.github.imthenico.annihilation.api.player.PlayerRegistry;
 import com.github.imthenico.annihilation.api.registry.ModelType;
 import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
+import com.github.imthenico.fastannihilation.papi.NexusExpansion;
 import com.github.imthenico.fastannihilation.scheduler.SimpleBukkitScheduler;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
@@ -306,6 +307,7 @@ public class FastAnnihilationPlugin extends JavaPlugin {
         new GameExpansion(playerRegistry).register();
         new AnniPlayerExpansion(playerRegistry).register();
         new TeamExpansion().register();
+        new NexusExpansion(playerRegistry).register();
     }
 
     public static FastAnnihilationPlugin getInstance() {
