@@ -3,10 +3,6 @@ package com.github.imthenico.annihilation.api.model.lobby;
 import com.github.imthenico.annihilation.api.model.LocationModel;
 import com.github.imthenico.eventbus.key.Key;
 import com.github.imthenico.gmlib.GameMap;
-import com.github.imthenico.gmlib.world.AWorld;
-import com.github.imthenico.gmlib.world.WorldContainer;
-import com.github.imthenico.inject.annotation.InjectAll;
-import com.github.imthenico.inject.annotation.Skip;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -16,18 +12,8 @@ public class GameLobby extends GameMap {
 
     private final AtomicReference<LocationModel> spawn;
 
-    @InjectAll(from = GameLobbyData.class, valuesToExtract = {})
-    public GameLobby(
-            @Skip GameLobbyData modelData,
-            @Skip AWorld mainWorld,
-            @Skip WorldContainer additionalWorlds,
-            @Skip String mapName
-    ) {
-        super(modelData, mainWorld, additionalWorlds, mapName);
-
-        this.spawn = new AtomicReference<>();
-
-        setSpawn(modelData.getSpawn());
+    public GameLobby(GameLobbyData modelData, LocationModel spawn) {
+        this.spawn = new AtomicReference<>(spawn);
 
         modelData.subscribe(
                 Key.of("lobby-data-listener"),
@@ -37,14 +23,6 @@ public class GameLobby extends GameMap {
                     }
                 }
         );
-    }
-
-    private void setSpawn(LocationModel locationModel) {
-        if (locationModel.getWorldName() == null) {
-            locationModel.setWorldName(getMainWorld().getName());
-        }
-
-        this.spawn.set(locationModel);
     }
 
     public Location getSpawn() {
