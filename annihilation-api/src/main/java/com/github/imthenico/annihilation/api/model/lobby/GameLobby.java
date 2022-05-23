@@ -12,13 +12,13 @@ public class GameLobby extends GameMap {
 
     private final AtomicReference<LocationModel> spawn;
 
-    public GameLobby(GameLobbyData modelData, LocationModel spawn) {
-        this.spawn = new AtomicReference<>(spawn);
+    public GameLobby(GameLobbyData modelData) {
+        this.spawn = new AtomicReference<>(modelData.getSpawn());
 
         modelData.subscribe(
                 Key.of("lobby-data-listener"),
                 dataMutateEvent -> {
-                    if (dataMutateEvent.getMutationAction().equals("setspawn")) {
+                    if (dataMutateEvent.getMutationAction().equals("set_spawn")) {
                         GameLobby.this.spawn.set((LocationModel) dataMutateEvent.getMutatedData());
                     }
                 }
@@ -32,7 +32,7 @@ public class GameLobby extends GameMap {
         copy.setWorldName(null);
 
         if (LocationModel.ZERO.equals(copy))
-            return ((World) getMainWorld().handle()).getSpawnLocation();
+            return ((World) getMainWorld().getHandle()).getSpawnLocation();
 
         return locationModel.toBukkit(allWorlds());
     }

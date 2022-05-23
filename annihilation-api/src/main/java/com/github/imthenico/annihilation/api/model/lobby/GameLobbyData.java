@@ -2,17 +2,20 @@ package com.github.imthenico.annihilation.api.model.lobby;
 
 import com.github.imthenico.annihilation.api.model.LocationModel;
 import com.github.imthenico.annihilation.api.model.EditableMapData;
+import com.github.imthenico.gmlib.event.DataMutateEvent;
+
+import java.util.Objects;
 
 public class GameLobbyData extends EditableMapData {
 
     private LocationModel spawn;
 
     public GameLobbyData() {
-        this.spawn = LocationModel.ZERO;
+        this(LocationModel.ZERO);
     }
 
     public GameLobbyData(LocationModel spawn) {
-        this.spawn = spawn;
+        this.spawn = Objects.requireNonNull(spawn);
     }
 
     @Override
@@ -42,6 +45,7 @@ public class GameLobbyData extends EditableMapData {
 
     public void setSpawn(LocationModel spawn) {
         this.spawn = spawn.copy();
+        handleDataMutation(new DataMutateEvent(spawn, this, "set_spawn"));
     }
 
     public LocationModel getSpawn() {
