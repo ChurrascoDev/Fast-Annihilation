@@ -35,7 +35,7 @@ import com.github.imthenico.fastannihilation.storage.AnniStorage;
 import com.github.imthenico.fastannihilation.task.GameTimerUpdater;
 import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.fastannihilation.command.*;
-import com.github.imthenico.gmlib.pool.WorldPool;
+import com.github.imthenico.gmlib.pool.TemplatePool;
 import com.github.imthenico.gmlib.swm.SWMWorldLoader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,6 +43,7 @@ import com.grinderwolf.swm.plugin.SWMPlugin;
 import me.fixeddev.commandflow.CommandManager;
 import me.fixeddev.commandflow.annotated.AnnotatedCommandTreeBuilder;
 import me.fixeddev.commandflow.annotated.AnnotatedCommandTreeBuilderImpl;
+import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.part.PartInjector;
 import me.fixeddev.commandflow.annotated.part.defaults.DefaultsModule;
 import me.fixeddev.commandflow.bukkit.BukkitCommandManager;
@@ -80,7 +81,7 @@ public class FastAnnihilationPlugin extends JavaPlugin {
     private PlayerRegistry playerRegistry;
     private UtilityPack utilityPack;
     private Scheduler scheduler;
-    private WorldPool worldPool;
+    private TemplatePool templatePool;
 
     private ModelService modelService;
     private GameService gameService;
@@ -193,40 +194,41 @@ public class FastAnnihilationPlugin extends JavaPlugin {
 
         List<Command> commandsToRegister = new ArrayList<>();
 
-        commandsToRegister.addAll(
-                commandTreeBuilder.fromClass(
-                        new GameInstanceManagerCommand(
-                                gameService.gameManager(),
-                                gameService.factory(),
-                                modelService.getModelStorage().getCachedModels()
-                        )
+        addToList(
+                commandsToRegister,
+                commandTreeBuilder,
+                new GameInstanceManagerCommand(
+                        gameService.gameManager(),
+                        gameService.factory(),
+                        modelService.getModelStorage().getCachedModels()
                 )
         );
 
-        commandsToRegister.addAll(
-                commandTreeBuilder.fromClass(
-                        new ConfigurableModelManagerCommand(
-                                fastAnnihilation.getModelTypeRegistry(),
-                                modelService.getModelStorage(),
-                                worldPool,
-                                modelService.getModelSetupManager()
-                        )
+        addToList(
+                commandsToRegister,
+                commandTreeBuilder,
+                new ConfigurableModelManagerCommand(
+                        fastAnnihilation.getModelTypeRegistry(),
+                        modelService.getModelStorage(),
+                        templatePool,
+                        modelService.getModelSetupManager()
                 )
         );
 
-        commandsToRegister.addAll(
-                commandTreeBuilder.fromClass(
-                        new MapSetupCommand(
-                                modelService.getModelSetupManager()
-                        )
-                )
+        addToList(
+                commandsToRegister,
+                commandTreeBuilder,
+                new MapSetupCommand(modelService.getModelSetupManager())
         );
 
-        commandsToRegister.addAll(
-            commandTreeBuilder.fromClass(new SelectTeamCommand())
-        );
+        addToList(commandsToRegister, commandTreeBuilder, new SelectTeamCommand());
+        addToList(commandsToRegister, commandTreeBuilder, new GameCommand(utilityPack.getMessageHandler()));
 
         commandManager.registerCommands(commandsToRegister);
+    }
+
+    private void addToList(List<Command> commands, AnnotatedCommandTreeBuilder builder, CommandClass commandClass) {
+        commands.addAll(builder.fromClass(commandClass));
     }
 
     private void createUtilityPack() {
@@ -258,12 +260,12 @@ public class FastAnnihilationPlugin extends JavaPlugin {
 
         AnniStorage anniStorage = storageService.getAnniStorage();
 
-        worldPool = WorldPool.create(new SWMWorldLoader(SWMPlugin.getInstance()));
+        templatePool = TemplatePool.create(new SWMWorldLoader());
 
         modelService = new ModelServiceImpl(
                 anniStorage.getModelDataRepository(),
                 gson,
-                worldPool
+                templatePool
         );
 
         modelService.start();
