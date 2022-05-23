@@ -141,7 +141,7 @@ public class LocationModel implements JsonSerializable {
         if (aWorld == null)
             throw new IllegalArgumentException("no world found with name '" + worldName + "' in container");
 
-        return toBukkit((World) aWorld.handle());
+        return toBukkit((World) aWorld.getHandle());
     }
 
     public Location toBukkit(WorldContainer<?> worldContainer) {
