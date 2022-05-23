@@ -12,6 +12,12 @@ public interface RandomElementPicker {
     }
 
     static <E> E pickRandom(List<E> list) {
+        if (list.size() == 0)
+            return null;
+        
+        if (list.size() == 1)
+            return list.get(0);
+
         return list.get(RANDOM.nextInt(list.size() - 1));
     }
 }
