@@ -111,7 +111,7 @@ public class ConfigurableModelManagerCommand implements CommandClass {
 
         try {
             modelSetupManager.setupModel(anniPlayer, mapModel);
-            World world = mapModel.getMainWorld().handle();
+            World world = (World) mapModel.getMainWorld().getHandle();
 
             player.teleport(world.getSpawnLocation());
 

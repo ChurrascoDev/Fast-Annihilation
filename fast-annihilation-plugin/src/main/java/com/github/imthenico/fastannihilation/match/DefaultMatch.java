@@ -140,7 +140,7 @@ public class DefaultMatch implements Match {
 
         Bukkit.getPluginManager().callEvent(new MatchFinalizeEvent(this));
 
-        runningMap.allWorlds().forEach(world -> Bukkit.unloadWorld((World) world.handle(), false));
+        runningMap.allWorlds().forEach(world -> Bukkit.unloadWorld((World) world.getHandle(), false));
     }
 
     @Override
