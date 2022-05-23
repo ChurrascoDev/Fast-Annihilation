@@ -6,6 +6,7 @@ import com.github.imthenico.annihilation.api.event.match.NexusDestroyEvent;
 import com.github.imthenico.annihilation.api.team.TeamColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
@@ -47,6 +48,16 @@ public class SimpleNexus implements Nexus {
     }
 
     public void hit(int damage, MatchPlayer externalAgent) {
+        if (externalAgent != null) {
+            MatchMap playerMatchMap = externalAgent.getMatch().getRunningMap();
+
+            if (!playerMatchMap.getMapName().equals(matchMap.getMapName())) {
+                Player player = externalAgent.getPlayer();
+
+                throw new IllegalArgumentException(player.getName() + " is not of the match " + matchMap.getMapName());
+            }
+        }
+
         health-=damage;
 
         NexusDamageEvent nexusEvent;
