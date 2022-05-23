@@ -1,6 +1,5 @@
 package com.github.imthenico.fastannihilation.game;
 
-import com.github.imthenico.annihilation.api.AnnihilationAPI;
 import com.github.imthenico.annihilation.api.game.GameExpansion;
 import com.github.imthenico.annihilation.api.game.GameFactory;
 import com.github.imthenico.annihilation.api.game.GameRoom;
@@ -13,9 +12,6 @@ import com.github.imthenico.annihilation.api.util.UtilityPack;
 import com.github.imthenico.annihilation.api.world.LocationReference;
 import com.github.imthenico.gmlib.GameMapHandler;
 import com.github.imthenico.gmlib.MapModel;
-import com.github.imthenico.inject.ConstructorModel;
-import com.github.imthenico.inject.InjectionContext;
-import com.github.imthenico.inject.InjectionStructure;
 import me.yushust.message.MessageHandler;
 
 import java.util.HashMap;
@@ -28,8 +24,6 @@ public class SimpleGameRoomFactory implements GameFactory {
     private final MatchFactory matchFactory;
     private final GameMapHandler mapHandler;
     private final LocationReference spawnReference;
-    private final InjectionStructure lobbyInjectionStructure = AnnihilationAPI.INJECTION_HANDLER
-            .createStructure(ConstructorModel.fromClass(GameLobby.class));
 
     public SimpleGameRoomFactory(
             ModelCache modelCache,
@@ -61,7 +55,7 @@ public class SimpleGameRoomFactory implements GameFactory {
 
         GameLobby gameLobby = mapHandler.createMap(
                 lobbyModel,
-                new InjectionContext(lobbyInjectionStructure),
+                GameLobby.class,
                 id
         );
 
