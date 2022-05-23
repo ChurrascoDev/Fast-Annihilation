@@ -1,12 +1,15 @@
 package com.github.imthenico.annihilation.api.entity;
 
 import com.github.imthenico.annihilation.api.equipment.Kit;
+import com.github.imthenico.annihilation.api.event.match.PlayerJoinTeamEvent;
+import com.github.imthenico.annihilation.api.event.match.PlayerLeaveTeamEvent;
 import com.github.imthenico.annihilation.api.game.Game;
 import com.github.imthenico.annihilation.api.game.GameRoom;
 import com.github.imthenico.annihilation.api.lang.LangHolder;
 import com.github.imthenico.annihilation.api.match.Match;
 import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.team.MatchTeam;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,30 +87,33 @@ public class MatchPlayer implements LangHolder {
     }
 
     public void handleTeamJoin(MatchTeam team) {
-        if (team != null) {
-            if (team.equals(this.team))
-                throw new IllegalArgumentException("This player is already in the team");
+        Objects.requireNonNull(team, "team is null");
 
-            if (!team.isMember(this))
-                throw new IllegalArgumentException("Invalid team or player is not member");
-        }
+        if (team.equals(this.team))
+            throw new IllegalArgumentException("This player is already in the team");
 
+        if (!team.isMember(this))
+            throw new IllegalArgumentException("Invalid team or player is not member");
+
+        MatchTeam prev = this.team;
         this.team = team;
+
+        Bukkit.getPluginManager()
+                .callEvent(new PlayerJoinTeamEvent(this, team, prev));
     }
 
-    public void handleTeamLeave(MatchTeam team) {
-        if (this.team == null)
-            return;
-
-        if (!this.team.equals(team)) {
-            throw new IllegalArgumentException("The player is not in the team");
-        }
+    public void handleTeamLeave() {
+        Objects.requireNonNull(team, "team is null");
 
         if (team.isMember(this)) {
             throw new IllegalStateException("Player is still in the team");
         }
 
+        MatchTeam prev = this.team;
         this.team = null;
+
+        Bukkit.getPluginManager()
+                .callEvent(new PlayerLeaveTeamEvent(this, prev));
     }
 
     public UUID getUniqueId() {
