@@ -22,16 +22,17 @@ public class MatchEventsListener implements Listener {
 
     @EventHandler
     public void onNexusDamage(NexusDamageEvent event) {
-        if (!event.isOfType(expectedMatchTypeName)) {
-            return;
-        }
-
         MatchPlayer matchPlayer = event.getExternalAgent();
 
         if (matchPlayer == null)
             return;
 
-        Match match = event.getMatch();
+        Match match = matchPlayer.getMatch();
+
+        if (!match.getTypeName().equals(expectedMatchTypeName)) {
+            return;
+        }
+
         Nexus nexus = event.getNexus();
         int damage = event.getDamage();
 
