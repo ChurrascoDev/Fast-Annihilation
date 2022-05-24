@@ -28,8 +28,8 @@ public class MatchListenerModule implements ListenerModule {
         return Arrays.asList(
                 new MatchEventsListener(expectedMatchTypeName, messageHandler),
                 new BlockBreakListener(playerRegistry),
+                new MatchStartListener(),
                 new PlayerDeathListener(expectedMatchTypeName, playerRegistry, messageHandler, scheduler),
-                new PlayerJoinMatchListener(expectedMatchTypeName),
                 new PlayerLeaveMatchListener(expectedMatchTypeName),
                 new PlayerSelectTeamListener(messageHandler),
                 new PlayerJoinTeamListener(),
