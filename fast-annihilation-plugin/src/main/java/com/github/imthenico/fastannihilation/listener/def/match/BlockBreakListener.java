@@ -31,24 +31,16 @@ public class BlockBreakListener implements Listener {
         if (matchPlayer.isDisqualified())
             return;
 
-        Block block = event.getBlock();
-
-        if (!block.hasMetadata("nexus-reference"))
-            return;
-
-        MetadataValue metadataValue = block.getMetadata("nexus-reference")
-                .stream()
-                .filter(obj -> obj instanceof Nexus)
-                .findFirst().orElse(null);
-
-        if (metadataValue == null)
-            return;
-
         Match match = matchPlayer.getMatch();
+        Nexus nexus = match.getRunningMap()
+                .getNexusByLocation(event.getBlock().getLocation());
+
+        if (nexus == null)
+            return;
+
         Options options = match.getGame().getOptions();
         int damage = options.getNexusDamage() * options.getNexusDamageMultiplier();
 
-        Nexus nexus = (Nexus) metadataValue.value();
         nexus.hit(damage, matchPlayer);
     }
 }
