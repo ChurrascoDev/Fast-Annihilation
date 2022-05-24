@@ -21,43 +21,44 @@ public class NexusExpansion extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player p, String params) {
         AnniPlayer anniPlayer = registry.getPlayer(p.getUniqueId());
-
-        if (anniPlayer == null) return null;
+        if (anniPlayer == null)
+            return null;
 
         MatchPlayer matchPlayer = MatchPlayer.from(anniPlayer);
+        if (matchPlayer == null)
+            return null;
 
-        if (matchPlayer == null) return null;
+        int firstParamSeparatorIndex = params.indexOf("_");
 
-        String[] separated = params.split("_");
+        if (firstParamSeparatorIndex < 0 || firstParamSeparatorIndex + 1 >= params.length())
+            return null;
 
-        if (separated.length < 2) return null;
+        String teamName = params.substring(0, firstParamSeparatorIndex);
+        TeamColor color = TeamColor.byName(teamName);
+        if (color == null)
+            return null;
 
-        String teamName = separated[0];
+        MatchMap matchMap = matchPlayer
+                .getMatch()
+                .getRunningMap();
 
-        try {
-            TeamColor color = TeamColor.valueOf(teamName);
-            MatchMap matchMap = matchPlayer
-                    .getMatch()
-                    .getRunningMap();
+        MatchTeam matchTeam = matchMap.getTeam(color);
 
-            MatchTeam matchTeam = matchMap.getTeam(color);
-            String request = separated[1];
+        String request = params.substring(firstParamSeparatorIndex + 1);
+        Nexus nexus = matchTeam.getNexus();
 
-            Nexus nexus = matchTeam.getNexus();
+        switch (request) {
+            case "health":
+                return nexus.getHealth() + "";
+            case "elegant_health": {
+                int nexusHealth = nexus.getHealth();
 
-            switch (request) {
-                case "health":
-                    return nexus.getHealth() + "";
-                case "elegant_health": {
-                    int nexusHealth = nexus.getHealth();
+                if (nexusHealth <= 0)
+                    return "&c✘";
 
-                    if (nexusHealth <= 0)
-                        return "&c✘";
-
-                    return nexusHealth + "";
-                }
+                return nexusHealth + "";
             }
-        } catch (Exception ignored) {}
+        }
 
         return null;
     }
@@ -76,4 +77,5 @@ public class NexusExpansion extends PlaceholderExpansion {
     public String getVersion() {
         return "1.0";
     }
+
 }
