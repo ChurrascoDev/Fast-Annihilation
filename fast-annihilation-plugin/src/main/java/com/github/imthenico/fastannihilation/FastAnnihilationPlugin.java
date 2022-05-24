@@ -20,14 +20,11 @@ import com.github.imthenico.annihilation.api.player.PlayerRegistry;
 import com.github.imthenico.annihilation.api.registry.ModelType;
 import com.github.imthenico.annihilation.api.registry.ModelTypeRegistry;
 import com.github.imthenico.annihilation.api.scheduler.Scheduler;
-import com.github.imthenico.fastannihilation.papi.NexusExpansion;
+import com.github.imthenico.fastannihilation.papi.*;
 import com.github.imthenico.fastannihilation.scheduler.SimpleBukkitScheduler;
 import com.github.imthenico.annihilation.api.service.ModelService;
 import com.github.imthenico.annihilation.api.service.GameService;
 import com.github.imthenico.annihilation.api.service.ScoreboardService;
-import com.github.imthenico.fastannihilation.papi.AnniPlayerExpansion;
-import com.github.imthenico.fastannihilation.papi.GameExpansion;
-import com.github.imthenico.fastannihilation.papi.TeamExpansion;
 import com.github.imthenico.fastannihilation.service.GameServiceImpl;
 import com.github.imthenico.fastannihilation.service.ModelServiceImpl;
 import com.github.imthenico.fastannihilation.service.PluginStorageService;
@@ -40,7 +37,6 @@ import com.github.imthenico.gmlib.pool.TemplatePool;
 import com.github.imthenico.gmlib.swm.SWMWorldLoader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.grinderwolf.swm.plugin.SWMPlugin;
 import me.fixeddev.commandflow.CommandManager;
 import me.fixeddev.commandflow.annotated.AnnotatedCommandTreeBuilder;
 import me.fixeddev.commandflow.annotated.AnnotatedCommandTreeBuilderImpl;
@@ -308,6 +304,7 @@ public class FastAnnihilationPlugin extends JavaPlugin {
         new AnniPlayerExpansion(playerRegistry).register();
         new TeamExpansion().register();
         new NexusExpansion(playerRegistry).register();
+        new MatchExpansion(playerRegistry).register();
     }
 
     public static FastAnnihilationPlugin getInstance() {
