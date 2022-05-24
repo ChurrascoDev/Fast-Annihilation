@@ -118,6 +118,18 @@ public class LocationModel implements JsonSerializable {
     }
 
     @Override
+    public String toString() {
+        return "LocationModel{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", yaw=" + yaw +
+                ", pitch=" + pitch +
+                ", worldName='" + worldName + '\'' +
+                '}';
+    }
+
+    @Override
     public @NotNull JsonElement serialize() {
         JsonTreeBuilder jsonTreeBuilder = JsonTreeBuilder.create();
 
