@@ -37,7 +37,7 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
         return (phase, game) -> {
             game.getOptions().setNexusInvulnerability(true);
 
-            messageHandler.send(game, "broadcast.first-phase");
+            messageHandler.send(game.getPlayers(), "broadcast.first-phase");
         };
     }
 
@@ -45,7 +45,7 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
         return (phase, game) -> {
             game.getOptions().setNexusInvulnerability(false);
 
-            messageHandler.send(game, "broadcast.second-phase");
+            messageHandler.send(game.getPlayers(), "broadcast.second-phase");
         };
     }
 
@@ -53,7 +53,7 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
         return (phase, game) -> {
             // spawn diamonds
 
-            messageHandler.send(game, "broadcast.third-phase");
+            messageHandler.send(game.getPlayers(), "broadcast.third-phase");
         };
     }
 
@@ -68,8 +68,7 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
                 }
             }
              */
-
-            messageHandler.send(game, "broadcast.fourth-phase");
+            messageHandler.send(game.getPlayers(), "broadcast.fourth-phase");
         };
     }
 
@@ -77,7 +76,7 @@ public class DefaultPhaseFactory implements PhaseActionFactory {
         return (phase, game) -> {
             game.getOptions().setNexusDamageMultiplier(2);
 
-            messageHandler.send(game, "broadcast.fifth-phase");
+            messageHandler.send(game.getPlayers(), "broadcast.fifth-phase");
         };
     }
 }
