@@ -11,6 +11,8 @@ import com.github.imthenico.annihilation.api.util.Pair;
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -34,17 +36,17 @@ public class DefaultPhaseManager implements PhaseManager {
     }
 
     @Override
-    public Collection<Integer> getPhases() {
+    public @NotNull Collection<Integer> getPhases() {
         return Collections.unmodifiableCollection(phases.keySet());
     }
 
     @Override
-    public SimpleTimer getTimer() {
+    public @Nullable SimpleTimer getTimer() {
         return timer;
     }
 
     @Override
-    public RunnablePhase getCurrentPhase() {
+    public @Nullable RunnablePhase getCurrentPhase() {
         return phases.get(currentPhase).getLeft();
     }
 
@@ -54,11 +56,11 @@ public class DefaultPhaseManager implements PhaseManager {
     }
 
     @Override
-    public RunnablePhase next() throws UnsupportedOperationException {
+    public @NotNull RunnablePhase next() throws UnsupportedOperationException {
         if (!hasNext())
             throw new UnsupportedOperationException("The last phase is running.");
 
-        initPhase(currentPhase++);
+        initPhase(currentPhase);
         return phases.get(currentPhase).getLeft();
     }
 

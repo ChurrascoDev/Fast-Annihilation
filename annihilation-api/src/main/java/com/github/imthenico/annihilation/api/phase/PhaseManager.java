@@ -1,22 +1,24 @@
 package com.github.imthenico.annihilation.api.phase;
 
 import com.github.imthenico.annihilation.api.util.SimpleTimer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 public interface PhaseManager extends Runnable {
 
-    Collection<Integer> getPhases();
+    @NotNull Collection<Integer> getPhases();
 
     void start() throws UnsupportedOperationException;
 
-    RunnablePhase next() throws UnsupportedOperationException;
+    @NotNull RunnablePhase next() throws UnsupportedOperationException;
 
     boolean hasNext();
 
-    SimpleTimer getTimer();
+    @Nullable SimpleTimer getTimer();
 
-    RunnablePhase getCurrentPhase();
+    @Nullable RunnablePhase getCurrentPhase();
 
     boolean isLastPhase();
 
