@@ -50,6 +50,7 @@
             <groupId>com.github.imthenico.gamemaplib</groupId>
             <artifactId>swm-world-impl</artifactId>
             <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.hexaway.board</groupId>
