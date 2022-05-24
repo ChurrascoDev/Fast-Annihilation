@@ -3,7 +3,6 @@ package com.github.imthenico.fastannihilation.phase;
 import com.github.imthenico.annihilation.api.event.match.PhaseEndEvent;
 import com.github.imthenico.annihilation.api.event.match.PhaseStartEvent;
 import com.github.imthenico.annihilation.api.game.Game;
-import com.github.imthenico.annihilation.api.phase.Phase;
 import com.github.imthenico.annihilation.api.phase.PhaseAction;
 import com.github.imthenico.annihilation.api.phase.PhaseActionFactory;
 import com.github.imthenico.annihilation.api.phase.PhaseManager;
@@ -20,7 +19,7 @@ import java.util.function.Function;
 public class DefaultPhaseManager implements PhaseManager {
 
     private final Game game;
-    private final Map<Integer, Pair<SimpleRunningPhase, PhaseAction>> phases;
+    private final Map<Integer, SimpleRunningPhase> phases;
     private final PluginManager pluginManager;
 
     private int currentPhase = 0;
@@ -28,7 +27,7 @@ public class DefaultPhaseManager implements PhaseManager {
 
     private DefaultPhaseManager(
             Game game,
-            Map<Integer, Pair<SimpleRunningPhase, PhaseAction>> phases
+            Map<Integer, SimpleRunningPhase> phases
     ) {
         this.phases = phases;
         this.game = game;
@@ -47,7 +46,7 @@ public class DefaultPhaseManager implements PhaseManager {
 
     @Override
     public @Nullable RunnablePhase getCurrentPhase() {
-        return phases.get(currentPhase).getLeft();
+        return phases.get(currentPhase);
     }
 
     @Override
@@ -60,8 +59,8 @@ public class DefaultPhaseManager implements PhaseManager {
         if (!hasNext())
             throw new UnsupportedOperationException("The last phase is running.");
 
-        initPhase(currentPhase);
-        return phases.get(currentPhase).getLeft();
+        initPhase(currentPhase++);
+        return phases.get(currentPhase);
     }
 
     @Override
@@ -78,8 +77,7 @@ public class DefaultPhaseManager implements PhaseManager {
     }
 
     private void initPhase(int phaseNumber) {
-        Pair<SimpleRunningPhase, PhaseAction> phaseEntry = phases.get(phaseNumber);
-        SimpleRunningPhase phase = phaseEntry.getLeft();
+        SimpleRunningPhase phase = phases.get(phaseNumber);
 
         if (currentPhase > 0) {
             endPhase(phase);
@@ -89,7 +87,7 @@ public class DefaultPhaseManager implements PhaseManager {
 
         this.currentPhase = phaseNumber;
         phase.running = true;
-        phaseEntry.getRight().accept(phase, game);
+        phase.getPhaseAction().accept(phase, game);
 
         pluginManager.callEvent(new PhaseStartEvent(game.runningMatch(), phase));
     }
@@ -124,7 +122,7 @@ public class DefaultPhaseManager implements PhaseManager {
             PhaseAction phaseAction = phaseActionFactory.newActionFor(phaseNumber);
             Objects.requireNonNull(phaseAction, "phase action of " + phaseNumber + " is null");
 
-            phaseManager.phases.put(phaseNumber, new Pair<>(new SimpleRunningPhase(duration, phaseNumber, phaseAction), phaseAction));
+            phaseManager.phases.put(phaseNumber, new SimpleRunningPhase(duration, phaseNumber, phaseAction));
         }
 
         return phaseManager;
