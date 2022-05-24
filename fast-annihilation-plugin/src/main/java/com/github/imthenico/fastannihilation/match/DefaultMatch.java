@@ -105,7 +105,7 @@ public class DefaultMatch implements Match {
 
     @Override
     public MatchPlayer handleJoin(AnniPlayer player) {
-        if (game.room().isWithin(player)) {
+        if (players.containsKey(player.getId())) {
             throw new IllegalStateException("This player is already playing this match");
         }
 
