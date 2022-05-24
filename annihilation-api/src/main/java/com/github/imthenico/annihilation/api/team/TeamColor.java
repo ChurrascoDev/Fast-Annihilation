@@ -2,7 +2,7 @@ package com.github.imthenico.annihilation.api.team;
 
 import org.bukkit.ChatColor;
 
-import java.util.Locale;
+import java.util.*;
 
 public enum TeamColor {
 
@@ -10,6 +10,8 @@ public enum TeamColor {
     YELLOW(ChatColor.YELLOW),
     BLUE(ChatColor.BLUE),
     GREEN(ChatColor.GREEN);
+
+    private final static Collection<TeamColor> VALUES = Arrays.asList(values());
 
     private final ChatColor colorCode;
 
@@ -27,5 +29,12 @@ public enum TeamColor {
 
     public String getLowerCaseName() {
         return name().toLowerCase(Locale.ROOT);
+    }
+
+    public static TeamColor byName(String name) {
+        for (TeamColor value : VALUES) {
+            if (value.name().equalsIgnoreCase(name)) return value;
+        }
+        return null;
     }
 }
