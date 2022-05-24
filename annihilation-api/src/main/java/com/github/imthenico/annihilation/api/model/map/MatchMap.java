@@ -61,6 +61,15 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
     }
 
     @Override
+    public Nexus getNexusByLocation(Location location) {
+        for (Nexus value : nexusMap.values()) {
+            if (value.getLocation().equals(toBlock(location))) return value;
+        }
+
+        return null;
+    }
+
+    @Override
     public List<Location> getTeamSpawns(TeamColor color) {
         return teamSpawns.get(color);
     }
@@ -125,11 +134,24 @@ public class MatchMap extends GameMap implements DataHolder, ExplicitMatchProper
         if (nexusModel == null)
             throw new IllegalArgumentException("Nexus in '" + color + "' data is null");
 
+        Location nexusLocation = nexusModel.getLocation().toBukkit(worldContainer);
+
+        Location normalized = toBlock(nexusLocation);
+
         return new SimpleNexus(
                 nexusModel.totalHealth,
                 color,
-                nexusModel.getLocation().toBukkit(worldContainer),
+                normalized,
                 this
+        );
+    }
+
+    private static Location toBlock(Location location) {
+        return new Location(
+                location.getWorld(),
+                location.getBlockX(),
+                location.getBlockY(),
+                location.getBlockX()
         );
     }
 }
