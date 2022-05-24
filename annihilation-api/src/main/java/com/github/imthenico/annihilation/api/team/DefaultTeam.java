@@ -75,7 +75,7 @@ public class DefaultTeam implements MatchTeam {
             members.remove(matchPlayer);
         }
 
-        matchPlayer.handleTeamLeave(this);
+        matchPlayer.handleTeamLeave();
         return success;
     }
 
