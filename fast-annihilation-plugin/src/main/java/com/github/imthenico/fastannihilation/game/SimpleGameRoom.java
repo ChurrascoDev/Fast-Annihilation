@@ -209,6 +209,12 @@ public class SimpleGameRoom implements GameRoom {
     }
 
     @Override
+    public List<AnniPlayer> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
+
+    @Override
     public int playerCount() {
         return players.size();
     }

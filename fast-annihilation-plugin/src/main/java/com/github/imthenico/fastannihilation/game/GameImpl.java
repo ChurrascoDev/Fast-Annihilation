@@ -8,6 +8,7 @@ import com.github.imthenico.annihilation.api.match.authorization.MatchAuthorizer
 import com.github.imthenico.annihilation.api.match.expansion.MatchExpansion;
 import com.github.imthenico.annihilation.api.message.MessagePath;
 import com.github.imthenico.annihilation.api.model.map.MatchMapData;
+import com.github.imthenico.annihilation.api.player.AnniPlayer;
 import com.github.imthenico.annihilation.api.strategy.MatchMapModelProvider;
 import com.github.imthenico.annihilation.api.util.RandomElementPicker;
 import com.github.imthenico.annihilation.api.util.VoteCounter;
@@ -16,6 +17,7 @@ import com.github.imthenico.gmlib.MapModel;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class GameImpl implements Game {
 
@@ -156,5 +158,15 @@ public class GameImpl implements Game {
     @Override
     public GameRoom room() {
         return owner;
+    }
+
+    @Override
+    public List<AnniPlayer> getPlayers(Predicate<AnniPlayer> filter) {
+        return owner.getPlayers(filter);
+    }
+
+    @Override
+    public List<AnniPlayer> getPlayers() {
+        return owner.getPlayers();
     }
 }

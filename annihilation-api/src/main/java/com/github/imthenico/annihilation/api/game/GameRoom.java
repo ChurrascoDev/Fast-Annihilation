@@ -25,6 +25,8 @@ public interface GameRoom {
 
     List<AnniPlayer> getPlayers(Predicate<AnniPlayer> filter);
 
+    List<AnniPlayer> getPlayers();
+
     int playerCount();
 
     void restoreLogic();
