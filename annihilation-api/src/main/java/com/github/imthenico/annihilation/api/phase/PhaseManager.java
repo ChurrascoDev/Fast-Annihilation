@@ -23,8 +23,8 @@ public interface PhaseManager extends Runnable {
     boolean isLastPhase();
 
     abstract class RunnablePhase extends Phase {
-        public RunnablePhase(Phase phase) {
-            super(phase.getTotalTime(), phase.getPhaseNumber());
+        public RunnablePhase(int totalTime, int phaseNumber, PhaseAction phaseAction) {
+            super(totalTime, phaseNumber, phaseAction);
         }
 
         public abstract boolean isRunning();

@@ -124,8 +124,7 @@ public class DefaultPhaseManager implements PhaseManager {
             PhaseAction phaseAction = phaseActionFactory.newActionFor(phaseNumber);
             Objects.requireNonNull(phaseAction, "phase action of " + phaseNumber + " is null");
 
-            Phase phase = new Phase(duration, phaseNumber);
-            phaseManager.phases.put(phaseNumber, new Pair<>(new SimpleRunningPhase(phase), phaseAction));
+            phaseManager.phases.put(phaseNumber, new Pair<>(new SimpleRunningPhase(duration, phaseNumber, phaseAction), phaseAction));
         }
 
         return phaseManager;
@@ -142,8 +141,8 @@ public class DefaultPhaseManager implements PhaseManager {
         boolean running;
         boolean finished;
 
-        public SimpleRunningPhase(Phase phase) {
-            super(phase);
+        public SimpleRunningPhase(int totalTime, int phaseNumber, PhaseAction phaseAction) {
+            super(totalTime, phaseNumber, phaseAction);
         }
 
         @Override
